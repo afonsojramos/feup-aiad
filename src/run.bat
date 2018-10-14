@@ -1,1 +1,0 @@
-java -cp "jade.jar;agents/." jade.Boot -gui

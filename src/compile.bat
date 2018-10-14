@@ -1,1 +1,0 @@
-for /r %%a in (.) do (javac -cp "jade.jar" %%a\*.java)
