@@ -6,7 +6,6 @@
 .project
 batch/
 docs/
-feup-aiad.rs/
 icons/
 installer/
 launchers/
@@ -15,3 +14,5 @@ integration/
 lib/
 repast-licenses
 *.properties
+*.log
+*.settings
