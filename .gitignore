@@ -1,0 +1,17 @@
+/bin/
+*.txt
+*.class
+.settings/
+.classpath
+.project
+batch/
+docs/
+feup-aiad.rs/
+icons/
+installer/
+launchers/
+freezedried_data/
+integration/
+lib/
+repast-licenses
+*.properties
