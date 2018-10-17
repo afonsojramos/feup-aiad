@@ -16,3 +16,4 @@ repast-licenses
 *.properties
 *.log
 *.settings
+output/
