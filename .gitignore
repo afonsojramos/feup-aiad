@@ -11,7 +11,6 @@ installer/
 launchers/
 freezedried_data/
 integration/
-lib/
 repast-licenses
 *.properties
 *.log

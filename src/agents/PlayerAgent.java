@@ -7,7 +7,11 @@ import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 
-public class PlayerAgent {
+import sajas.core.Agent;
+import sajas.core.behaviours.Behaviour;
+import sajas.core.behaviours.CyclicBehaviour;
+
+public class PlayerAgent extends Agent {
 	private ContinuousSpace<Object> space;
 	private Grid<Object> grid;
 	
@@ -15,9 +19,20 @@ public class PlayerAgent {
 		this.space = space; this.grid = grid;
 	}
 	
-	@ScheduledMethod(start=1, interval=500000)
-	public void step() {
-		moveTowards(new GridPoint(3, 3));
+	public void setup() {
+		addBehaviour(new WalkingBehaviour());
+		System.out.println("Reporting in.");
+	}
+	
+	public void takeDown() {
+		System.out.println("I've been killed.");
+	}
+	
+	class WalkingBehaviour extends CyclicBehaviour {
+		@Override
+		public void action() {
+			moveTowards(new GridPoint(3, 3));	
+		}
 	}
 	
 	public void moveTowards(GridPoint pt) {
