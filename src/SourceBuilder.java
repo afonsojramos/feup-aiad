@@ -33,8 +33,9 @@ public class SourceBuilder implements ContextBuilder<Object> {
 		context.add(new RadarBackground());
 		for (int i = 0; i < 5; i++) {
 			context.add(new CTAgent(space, grid));
+			context.add(new TAgent(space, grid));
 		}
-		
+
 		return context;
 	}
 	
