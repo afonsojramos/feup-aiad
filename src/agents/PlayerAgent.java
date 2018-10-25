@@ -19,6 +19,10 @@ public class PlayerAgent extends Agent {
 		this.space = space; this.grid = grid;
 	}
 	
+	public PlayerAgent() {
+		// TODO Delete this (testing purposes only)
+	}
+
 	public void setup() {
 		addBehaviour(new WalkingBehaviour());
 		System.out.println("Reporting in.");
