@@ -1,5 +1,8 @@
 import sajas.sim.repasts.RepastSLauncher;
 import sajas.wrapper.ContainerController;
+
+import java.util.concurrent.ThreadLocalRandom;
+
 import agents.CTAgent;
 import agents.RadarBackground;
 import agents.TAgent;
@@ -16,12 +19,16 @@ import repast.simphony.space.continuous.RandomCartesianAdder;
 import repast.simphony.space.continuous.SimpleCartesianAdder;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridBuilderParameters;
+import repast.simphony.space.grid.GridPoint;
 import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.grid.StrictBorders;
 import sajas.core.Runtime;
 
 public class SourceLauncher extends RepastSLauncher {
-
+	
+	private Grid<Object> grid;
+	private ContinuousSpace<Object> space;
+	
 	@Override
 	public String getName() {
 		return "AIAD Source";
@@ -30,19 +37,50 @@ public class SourceLauncher extends RepastSLauncher {
 	@Override
 	protected void launchJADE() {
 		Runtime rt = Runtime.instance();
-		Profile p1 = new ProfileImpl();
-		ContainerController mainContainer = rt.createAgentContainer(p1);
+		Profile p1 = new ProfileImpl(), p2 = new ProfileImpl();
+		ContainerController ctContainer = rt.createAgentContainer(p1), tContainer = rt.createAgentContainer(p2);
 		
 		try {
-			launchAgents(mainContainer);
+			launchAgents(ctContainer, tContainer);
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void launchAgents(ContainerController container) throws StaleProxyException {
-		CTAgent agent = new CTAgent();
-		container.acceptNewAgent("Bot Wolf", agent).start();
+	private GridPoint generateSpawnPoint(boolean isTSide) {
+		if (isTSide) {
+			int x = ThreadLocalRandom.current().nextInt(15, 24), y = ThreadLocalRandom.current().nextInt(3, 7);
+			return new GridPoint(x, y);
+		} else {
+			int x = ThreadLocalRandom.current().nextInt(29, 33), y = ThreadLocalRandom.current().nextInt(38, 42);
+			return new GridPoint(x, y);
+		}
+	}
+	
+	private void launchAgents(ContainerController ctContainer, ContainerController tContainer) throws StaleProxyException {
+		
+		// Generate the two indexes of the team's in-game leaders.
+		int tIGLIndex = ThreadLocalRandom.current().nextInt(0, 5);
+		int ctIGLIndex = ThreadLocalRandom.current().nextInt(0, 5);
+		
+		for (int i = 0; i < 5; i++) {
+			boolean tIsIGL = false, ctIsIGL = false;
+			
+			if (i == tIGLIndex) tIsIGL = true;
+			if (i == ctIGLIndex) ctIsIGL = true;
+			
+			CTAgent ct = new CTAgent(this.space, this.grid, ctIsIGL);
+			ctContainer.acceptNewAgent("CT" + i, ct).start();
+			
+			GridPoint ctSpawn = generateSpawnPoint(false);
+			this.space.moveTo(ct, ctSpawn.getX(), ctSpawn.getY());	// Move to spawn point.
+		
+			TAgent t = new TAgent(this.space, this.grid, tIsIGL);
+			tContainer.acceptNewAgent("T" + i, t).start();
+			
+			GridPoint tSpawn = generateSpawnPoint(true);
+			this.space.moveTo(t, tSpawn.getX(), tSpawn.getY());		// Move to spawn point.
+		}
 	}
 	
 	@Override
@@ -50,22 +88,17 @@ public class SourceLauncher extends RepastSLauncher {
 		context.setId("aiad-source");
 		
 		ContinuousSpaceFactory spaceFactory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);
-		ContinuousSpace<Object> space = spaceFactory.createContinuousSpace("space", context, 
-				new SimpleCartesianAdder<Object>(), new repast.simphony.space.continuous.StrictBorders(), 50, 50);
+		this.space = spaceFactory.createContinuousSpace("space", context, 
+				new RandomCartesianAdder<Object>(), new repast.simphony.space.continuous.StrictBorders(), 50, 50);
 		
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
-		Grid<Object> grid = gridFactory.createGrid("grid", context, 
+		this.grid = gridFactory.createGrid("grid", context, 
 				new GridBuilderParameters<Object>(new StrictBorders(),
 				new SimpleGridAdder<Object>(), true, 50, 50));
 		
 		RadarBackground rb = new RadarBackground();
 		context.add(rb);
 		space.moveTo(rb, 25, 25);
-		
-		for (int i = 0; i < 5; i++) {
-			context.add(new CTAgent(space, grid));
-			context.add(new TAgent(space, grid));
-		}
 
 		return super.build(context);
 	}

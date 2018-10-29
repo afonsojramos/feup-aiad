@@ -1,16 +1,17 @@
 package agents;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
+import repast.simphony.space.grid.GridPoint;
 
-public class CTAgent extends PlayerAgent {
-	
-	public CTAgent() {
-		// TODO Delete this (testing purposes only)
-		super();
+public class CTAgent extends PlayerAgent {	
+	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
+		super(space, grid, new GridPoint(35, 12), isIGL);
 	}
 	
-	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid) {
-		super(space, grid);
+	@Override
+	public void checkSurroundings() {
 	}
 }

@@ -1,6 +1,6 @@
 <repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D>
   <shapeWkt>circle</shapeWkt>
-  <size>700.0</size>
+  <size>750.0</size>
   <sizeMax>15.0</sizeMax>
   <sizeMin>1.0</sizeMin>
   <sizeScale>1.0</sizeScale>
@@ -36,5 +36,5 @@
     <float>1.0</float>
     <float>1.0</float>
   </colorScale>
-  <iconFile2D>./src/assets/dust2-radar.png</iconFile2D>
+  <iconFile2D>./src/assets/dust2-radar-original.png</iconFile2D>
 </repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D>
