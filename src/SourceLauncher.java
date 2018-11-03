@@ -9,6 +9,7 @@ import agents.TAgent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.StaleProxyException;
+import maps.Map;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
@@ -95,6 +96,9 @@ public class SourceLauncher extends RepastSLauncher {
 		this.grid = gridFactory.createGrid("grid", context, 
 				new GridBuilderParameters<Object>(new StrictBorders(),
 				new SimpleGridAdder<Object>(), true, 50, 50));
+		
+		Map map = new Map();
+		System.out.println(map.getGraph().getEdges().get(0));
 		
 		RadarBackground rb = new RadarBackground();
 		context.add(rb);
