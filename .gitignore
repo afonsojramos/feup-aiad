@@ -16,3 +16,4 @@ repast-licenses
 *.log
 *.settings
 output/
+.temp/
