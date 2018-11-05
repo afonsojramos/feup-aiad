@@ -2,19 +2,25 @@ package graph;
 
 public class Vertex {
     final private String id;
-    final private String name;
+    final private int x;
+    final private int y;
+    
 
-
-    public Vertex(String id, String name) {
+    public Vertex(String id, int x, int y) {
         this.id = id;
-        this.name = name;
+        this.x = x;
+        this.y = y;
     }
     public String getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public int getX() {
+        return x;
+    }
+    
+    public int getY() {
+        return y;
     }
 
     @Override
@@ -44,7 +50,7 @@ public class Vertex {
 
     @Override
     public String toString() {
-        return name;
+        return id + "_" + x + "_" + y;
     }
 
 }
