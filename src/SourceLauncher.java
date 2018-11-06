@@ -43,53 +43,19 @@ public class SourceLauncher extends RepastSLauncher {
 		ContainerController container = rt.createAgentContainer(p1);
 		
 		try {
-			launchAgents(container);
+			bootServer(container);
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private GridPoint generateSpawnPoint(boolean isTSide) {
-		if (isTSide) {
-			int x = ThreadLocalRandom.current().nextInt(15, 24), y = ThreadLocalRandom.current().nextInt(3, 7);
-			return new GridPoint(x, y);
-		} else {
-			int x = ThreadLocalRandom.current().nextInt(29, 33), y = ThreadLocalRandom.current().nextInt(38, 42);
-			return new GridPoint(x, y);
-		}
+	private void bootServer(ContainerController container) throws StaleProxyException {
+		GameServer server = new GameServer(this.space, this.grid);
+		container.acceptNewAgent("server", server).start();
 	}
-	
-	private void launchAgents(ContainerController container) throws StaleProxyException {
-		
-		GameServer server = new GameServer();
-		container.acceptNewAgent("server", server);
-		
-		// Generate the two indexes of the team's in-game leaders.
-		int tIGLIndex = ThreadLocalRandom.current().nextInt(0, 5);
-		int ctIGLIndex = ThreadLocalRandom.current().nextInt(0, 5);
-		
-		for (int i = 0; i < 5; i++) {
-			boolean tIsIGL = false, ctIsIGL = false;
-			
-			if (i == tIGLIndex) tIsIGL = true;
-			if (i == ctIGLIndex) ctIsIGL = true;
-			
-			CTAgent ct = new CTAgent(this.space, this.grid, ctIsIGL);
-			container.acceptNewAgent("CT" + i, ct).start();
-			
-			GridPoint ctSpawn = generateSpawnPoint(false);
-			this.space.moveTo(ct, ctSpawn.getX(), ctSpawn.getY());	// Move to spawn point.
-		
-			TAgent t = new TAgent(this.space, this.grid, tIsIGL);
-			container.acceptNewAgent("T" + i, t).start();
-			
-			GridPoint tSpawn = generateSpawnPoint(true);
-			this.space.moveTo(t, tSpawn.getX(), tSpawn.getY());		// Move to spawn point.
-		}
-	}
-	
+
 	@Override
-	public Context build(Context<Object> context) {	
+	public Context<?> build(Context<Object> context) {	
 		context.setId("aiad-source");
 		
 		ContinuousSpaceFactory spaceFactory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);

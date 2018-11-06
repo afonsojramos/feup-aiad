@@ -24,7 +24,7 @@ public class Graph {
     }
     
     public Node getNode(GridPoint pt) {
-    	for (Node node : this.nodes) 
+    	for (Node node : this.nodes)
     		if (pt.getX() == node.getX() && pt.getY() == node.getY()) 
     			return node;
     	return null;

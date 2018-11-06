@@ -37,12 +37,10 @@ public class PlayerAgent extends Agent {
 	private boolean isIGL;
 	
 	protected LinkedList<Node> route;
-	protected GameServer server;
 	
 	public PlayerAgent(ContinuousSpace<Object> space, Grid<Object> grid, GridPoint spawn, boolean isIGL) {
 		this.space = space; this.grid = grid; this.spawn = spawn; this.isIGL = isIGL;
-		this.hp = 100;
-		this.server = GameServer.getInstance();  // Get server singleton.		
+		this.hp = 100;		
 	}
 	
 	@Override
@@ -57,7 +55,7 @@ public class PlayerAgent extends Agent {
 		addBehaviour(new ListeningBehaviour());
 		
 		// TODO: Delete this test code.
-		Node testNodePleaseDeleteLater = this.server.map.getGraph().getNode(new GridPoint(25, 25));
+		Node testNodePleaseDeleteLater = GameServer.getInstance().map.getGraph().getNode(new GridPoint(25, 25));
 		this.createNewRoute(testNodePleaseDeleteLater);
 	}
 	
@@ -68,10 +66,10 @@ public class PlayerAgent extends Agent {
 	
 	private void createNewRoute(Node dstNode) {
 		GridPoint srcPoint = this.grid.getLocation(this);
-		Node srcNode = this.server.map.getGraph().getNode(srcPoint);
+		Node srcNode = GameServer.getInstance().map.getGraph().getNode(srcPoint);
 
-		this.server.map.getDijkstra().execute(srcNode);
-		this.route = this.server.map.getDijkstra().getPath(dstNode);
+		GameServer.getInstance().map.getDijkstra().execute(srcNode);
+		this.route = GameServer.getInstance().map.getDijkstra().getPath(dstNode);
 	}
 	
 	public GridPoint getSpawn() {
