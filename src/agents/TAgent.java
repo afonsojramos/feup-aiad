@@ -17,9 +17,17 @@ public class TAgent extends PlayerAgent {
 	
 	public void informTeammates(GridCell<CTAgent> enemy) {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent("ping");
-		msg.addReceiver(new AID("T1@AIAD Source", true));
-		//send(msg);
+		msg.setContent("HELP");
+		
+		for (int i = 0; i < 5; i++) {
+			String receiverAID = String.format("T%d@AIAD Source", (i+1));
+			
+			if (super.getAID().getName().equals(receiverAID))
+					continue;
+			
+			msg.addReceiver(new AID(receiverAID, true));
+		}
+		send(msg);
 	}
 	
 	@Override
@@ -28,8 +36,7 @@ public class TAgent extends PlayerAgent {
 		GridCellNgh<CTAgent> nghCreator = new GridCellNgh<CTAgent>(this.grid, pt, CTAgent.class, 1, 1);
 		List<GridCell<CTAgent>> gridCells = nghCreator.getNeighborhood(true);
 		
-		for (GridCell<CTAgent> enemy : gridCells) {
+		for (GridCell<CTAgent> enemy : gridCells)
 			informTeammates(enemy);
-		}
 	}
 }

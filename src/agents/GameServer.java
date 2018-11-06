@@ -41,8 +41,8 @@ public class GameServer extends Agent {
 			boolean isIGL = false;
 			if (iglIndex == i) isIGL = true;
 			
-			container.acceptNewAgent("CT" + i, new CTAgent(space, grid, isIGL)).start();
-			container.acceptNewAgent("T" + i, new TAgent(space, grid, isIGL)).start();
+			container.acceptNewAgent("CT" + (i+1), new CTAgent(space, grid, isIGL)).start();
+			container.acceptNewAgent("T" + (i+1), new TAgent(space, grid, isIGL)).start();
 		}
 	}
 	

@@ -16,7 +16,7 @@ import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
 import sajas.core.behaviours.SimpleBehaviour;
 
-public class PlayerAgent extends Agent {
+public abstract class PlayerAgent extends Agent {
 	
 	private static class Position {
 		public static GridPoint getPosition(String position) {
@@ -80,9 +80,7 @@ public class PlayerAgent extends Agent {
 		this.spawn = spawn;
 	}
 
-	
-	public void checkSurroundings() {
-	}
+	abstract void checkSurroundings();
 	
 	private class DelegateStrategy extends SimpleBehaviour {
 		private static final long serialVersionUID = 1L;
@@ -118,6 +116,8 @@ public class PlayerAgent extends Agent {
 
 		@Override
 		public void action() {
+			checkSurroundings();
+			
 			if (!route.isEmpty())
 				System.out.println(route.removeFirst());
 		}
