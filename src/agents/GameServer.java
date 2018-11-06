@@ -16,6 +16,8 @@ public class GameServer extends Agent {
 	private Grid<Object> grid;
 	protected Map map;
 	
+	private int MIN_DMG = 20, MAX_DMG = 33, CRIT_DMG = 80, CRIT_CHANCE = 33;
+	
 	public GameServer(ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.space = space;
 		this.grid = grid;
@@ -25,6 +27,13 @@ public class GameServer extends Agent {
 	public static GameServer getInstance() {
 		if (instance == null) instance = new GameServer(null, null);
 		return instance;
+	}
+
+	public int rollDamageOutput() {
+		if (ThreadLocalRandom.current().nextInt(100) < CRIT_CHANCE)
+			return CRIT_DMG;
+		
+		return ThreadLocalRandom.current().nextInt(MIN_DMG, MAX_DMG + 1);
 	}
 	
 	public GridPoint generateSpawnPoint(boolean isCTSide) {

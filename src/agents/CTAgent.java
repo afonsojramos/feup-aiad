@@ -15,7 +15,7 @@ public class CTAgent extends PlayerAgent {
 	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
 		super(space, grid, new GridPoint(35, 12), isIGL);
 	}
-	
+
 	public void informTeammates(GridCell<TAgent> enemy) {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent("HELP");
@@ -37,7 +37,8 @@ public class CTAgent extends PlayerAgent {
 		GridCellNgh<TAgent> nghCreator = new GridCellNgh<TAgent>(this.grid, pt, TAgent.class, 1, 1);
 		List<GridCell<TAgent>> gridCells = nghCreator.getNeighborhood(true);
 		
-		for (GridCell<TAgent> enemy : gridCells)
+		for (GridCell<TAgent> enemy : gridCells) {
 			informTeammates(enemy);
+		}
 	}
 }

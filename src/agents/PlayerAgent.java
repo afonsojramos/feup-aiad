@@ -1,11 +1,13 @@
 package agents;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import graph.Node;
 import jade.lang.acl.ACLMessage;
 import maps.Map;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.space.SpatialMath;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
@@ -117,6 +119,8 @@ public abstract class PlayerAgent extends Agent {
 		@Override
 		public void action() {
 			checkSurroundings();
+			
+			int damage = GameServer.getInstance().rollDamageOutput();
 			
 			if (!route.isEmpty())
 				System.out.println(route.removeFirst());
