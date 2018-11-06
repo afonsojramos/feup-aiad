@@ -4,6 +4,7 @@ import sajas.wrapper.ContainerController;
 import java.util.concurrent.ThreadLocalRandom;
 
 import agents.CTAgent;
+import agents.GameServer;
 import agents.RadarBackground;
 import agents.TAgent;
 import jade.core.Profile;
@@ -38,11 +39,11 @@ public class SourceLauncher extends RepastSLauncher {
 	@Override
 	protected void launchJADE() {
 		Runtime rt = Runtime.instance();
-		Profile p1 = new ProfileImpl(), p2 = new ProfileImpl();
-		ContainerController ctContainer = rt.createAgentContainer(p1), tContainer = rt.createAgentContainer(p2);
+		Profile p1 = new ProfileImpl();
+		ContainerController container = rt.createAgentContainer(p1);
 		
 		try {
-			launchAgents(ctContainer, tContainer);
+			launchAgents(container);
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
@@ -58,7 +59,10 @@ public class SourceLauncher extends RepastSLauncher {
 		}
 	}
 	
-	private void launchAgents(ContainerController ctContainer, ContainerController tContainer) throws StaleProxyException {
+	private void launchAgents(ContainerController container) throws StaleProxyException {
+		
+		GameServer server = new GameServer();
+		container.acceptNewAgent("server", server);
 		
 		// Generate the two indexes of the team's in-game leaders.
 		int tIGLIndex = ThreadLocalRandom.current().nextInt(0, 5);
@@ -71,13 +75,13 @@ public class SourceLauncher extends RepastSLauncher {
 			if (i == ctIGLIndex) ctIsIGL = true;
 			
 			CTAgent ct = new CTAgent(this.space, this.grid, ctIsIGL);
-			ctContainer.acceptNewAgent("CT" + i, ct).start();
+			container.acceptNewAgent("CT" + i, ct).start();
 			
 			GridPoint ctSpawn = generateSpawnPoint(false);
 			this.space.moveTo(ct, ctSpawn.getX(), ctSpawn.getY());	// Move to spawn point.
 		
 			TAgent t = new TAgent(this.space, this.grid, tIsIGL);
-			tContainer.acceptNewAgent("T" + i, t).start();
+			container.acceptNewAgent("T" + i, t).start();
 			
 			GridPoint tSpawn = generateSpawnPoint(true);
 			this.space.moveTo(t, tSpawn.getX(), tSpawn.getY());		// Move to spawn point.
@@ -96,9 +100,6 @@ public class SourceLauncher extends RepastSLauncher {
 		this.grid = gridFactory.createGrid("grid", context, 
 				new GridBuilderParameters<Object>(new StrictBorders(),
 				new SimpleGridAdder<Object>(), true, 50, 50));
-		
-		Map map = new Map();
-		System.out.println(map.getGraph().getEdges().get(0));
 		
 		RadarBackground rb = new RadarBackground();
 		context.add(rb);

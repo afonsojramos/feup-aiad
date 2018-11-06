@@ -1,16 +1,14 @@
 package graph;
 
-public class Vertex {
+public class Node {
     final private String id;
-    final private int x;
-    final private int y;
+    final private int x, y;
     
-
-    public Vertex(String id, int x, int y) {
+    public Node(String id, int x, int y) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this.x = x; this.y = y;
     }
+    
     public String getId() {
         return id;
     }
@@ -33,24 +31,33 @@ public class Vertex {
 
     @Override
     public boolean equals(Object obj) {
+    	final Node that = (Node) obj;
+    	
+    	if ((this.x == that.x && this.y == that.y) || this.id == that.id)
+    		return true;
+    	
+    	return false;
+    		
+    	/*
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Vertex other = (Vertex) obj;
+        Node other = (Node) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
             return false;
         return true;
+        */
     }
 
     @Override
     public String toString() {
-        return id + "_" + x + "_" + y;
+        return String.format("%s at x=%d and y=%d", this.id, this.x, this.y);
     }
 
 }

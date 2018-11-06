@@ -1,6 +1,10 @@
 package agents;
 
+import java.util.LinkedList;
+
+import graph.Node;
 import jade.lang.acl.ACLMessage;
+import maps.Map;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.SpatialMath;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -29,13 +33,16 @@ public class PlayerAgent extends Agent {
 	protected Grid<Object> grid;
 	
 	protected GridPoint spawn;
-	protected GridPoint goalPos;
 	private int hp;
 	private boolean isIGL;
+	
+	protected LinkedList<Node> route;
+	protected GameServer server;
 	
 	public PlayerAgent(ContinuousSpace<Object> space, Grid<Object> grid, GridPoint spawn, boolean isIGL) {
 		this.space = space; this.grid = grid; this.spawn = spawn; this.isIGL = isIGL;
 		this.hp = 100;
+		this.server = GameServer.getInstance();  // Get server singleton.		
 	}
 	
 	@Override
@@ -48,6 +55,23 @@ public class PlayerAgent extends Agent {
 		addBehaviour(new AliveBehaviour());
 		addBehaviour(new WalkingBehaviour());
 		addBehaviour(new ListeningBehaviour());
+		
+		// TODO: Delete this test code.
+		Node testNodePleaseDeleteLater = this.server.map.getGraph().getNode(new GridPoint(25, 25));
+		this.createNewRoute(testNodePleaseDeleteLater);
+	}
+	
+	@Override
+	public void takeDown() {
+		System.out.println("I've been killed.");
+	}
+	
+	private void createNewRoute(Node dstNode) {
+		GridPoint srcPoint = this.grid.getLocation(this);
+		Node srcNode = this.server.map.getGraph().getNode(srcPoint);
+
+		this.server.map.getDijkstra().execute(srcNode);
+		this.route = this.server.map.getDijkstra().getPath(dstNode);
 	}
 	
 	public GridPoint getSpawn() {
@@ -58,10 +82,6 @@ public class PlayerAgent extends Agent {
 		this.spawn = spawn;
 	}
 
-	@Override
-	public void takeDown() {
-		System.out.println("I've been killed.");
-	}
 	
 	public void checkSurroundings() {
 	}
@@ -100,8 +120,8 @@ public class PlayerAgent extends Agent {
 
 		@Override
 		public void action() {
-			if (goalPos != null)
-				moveTowards(goalPos);	
+			if (!route.isEmpty())
+				System.out.println(route.removeFirst());
 		}
 		
 		@Override
@@ -119,8 +139,8 @@ public class PlayerAgent extends Agent {
 			ACLMessage msg = receive();
 			
 			if (msg != null) {
-				System.out.println(msg);
-				goalPos = Position.getPosition(msg.getContent());
+				//System.out.println(msg);
+				//goalPos = Position.getPosition(msg.getContent());
 				//ACLMessage reply = msg.createReply();
 				//reply.setPerformative(ACLMessage.INFORM);
 				//reply.setContent("pong");
@@ -135,13 +155,23 @@ public class PlayerAgent extends Agent {
 	}
 	
 	public void moveTowards(GridPoint pt) {
-		if (pt.equals(this.grid.getLocation(this))) return;
 		
+		// Abort if agent already is located at the desired goal.
+		if (pt.equals(this.grid.getLocation(this))) 
+			return;
+		
+		
+		
+		
+		
+		
+		/*
 		NdPoint posStart = space.getLocation(this);
 		NdPoint posEnd = new NdPoint(pt.getX(), pt.getY());
 		space.moveByVector(this, 1, SpatialMath.calcAngleFor2DMovement(space, posStart, posEnd), 0);
 		
 		NdPoint posRes = space.getLocation(this);
 		grid.moveTo(this, (int) posRes.getX(), (int) posRes.getY());
+		*/
 	}
 }
