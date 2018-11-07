@@ -18,8 +18,8 @@ import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
 import sajas.core.behaviours.SimpleBehaviour;
 
-public abstract class PlayerAgent extends Agent {
-	
+public class PlayerAgent extends Agent {
+	/*
 	private static class Position {
 		public static GridPoint getPosition(String position) {
 			switch (position) {
@@ -42,7 +42,7 @@ public abstract class PlayerAgent extends Agent {
 	
 	public PlayerAgent(ContinuousSpace<Object> space, Grid<Object> grid, GridPoint spawn, boolean isIGL) {
 		this.space = space; this.grid = grid; this.spawn = spawn; this.isIGL = isIGL;
-		this.hp = 100;		
+		this.hp = 100;
 	}
 	
 	@Override
@@ -82,7 +82,8 @@ public abstract class PlayerAgent extends Agent {
 		this.spawn = spawn;
 	}
 
-	abstract void checkSurroundings();
+	public void checkSurroundings() {
+	}
 	
 	private class DelegateStrategy extends SimpleBehaviour {
 		private static final long serialVersionUID = 1L;
@@ -104,76 +105,19 @@ public abstract class PlayerAgent extends Agent {
 		}
 	}
 	
-	private class AliveBehaviour extends CyclicBehaviour {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void action() {
-			if (hp <= 0) takeDown();
-		}
-	}
-	
-	private class WalkingBehaviour extends CyclicBehaviour {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void action() {
-			checkSurroundings();
-			
-			int damage = GameServer.getInstance().rollDamageOutput();
-			
-			if (!route.isEmpty())
-				System.out.println(route.removeFirst());
-		}
-		
-		@Override
-		public int onEnd() {
-			return 0;
-		}
-	}
-	
-	private class ListeningBehaviour extends CyclicBehaviour {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void action() {
-			//checkSurroundings();
-			ACLMessage msg = receive();
-			
-			if (msg != null) {
-				//System.out.println(msg);
-				//goalPos = Position.getPosition(msg.getContent());
-				//ACLMessage reply = msg.createReply();
-				//reply.setPerformative(ACLMessage.INFORM);
-				//reply.setContent("pong");
-				//reply.addReceiver(msg.getSender());
-				//send(reply);
-			} else {
-				block();				
-			}
-			
-		}
-		
-	}
-	
 	public void moveTowards(GridPoint pt) {
 		
 		// Abort if agent already is located at the desired goal.
 		if (pt.equals(this.grid.getLocation(this))) 
 			return;
 		
-		
-		
-		
-		
-		
-		/*
+
 		NdPoint posStart = space.getLocation(this);
 		NdPoint posEnd = new NdPoint(pt.getX(), pt.getY());
 		space.moveByVector(this, 1, SpatialMath.calcAngleFor2DMovement(space, posStart, posEnd), 0);
 		
 		NdPoint posRes = space.getLocation(this);
 		grid.moveTo(this, (int) posRes.getX(), (int) posRes.getY());
-		*/
 	}
+	*/
 }

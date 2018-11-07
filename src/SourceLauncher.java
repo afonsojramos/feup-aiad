@@ -17,6 +17,7 @@ import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
 import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.space.continuous.ContinuousSpace;
+import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.RandomCartesianAdder;
 import repast.simphony.space.continuous.SimpleCartesianAdder;
 import repast.simphony.space.grid.Grid;
@@ -30,6 +31,7 @@ public class SourceLauncher extends RepastSLauncher {
 	
 	private Grid<Object> grid;
 	private ContinuousSpace<Object> space;
+	private Context<Object> context;
 	
 	@Override
 	public String getName() {
@@ -43,19 +45,45 @@ public class SourceLauncher extends RepastSLauncher {
 		ContainerController container = rt.createAgentContainer(p1);
 		
 		try {
-			bootServer(container);
+			launchAgents(container);
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void bootServer(ContainerController container) throws StaleProxyException {
-		GameServer server = new GameServer(this.space, this.grid);
+	private void launchAgents(ContainerController container) throws StaleProxyException {
+		GameServer server = GameServer.getInstance();
 		container.acceptNewAgent("server", server).start();
+		context.add(server);
+		
+		int iglIndex = ThreadLocalRandom.current().nextInt(0, 5);
+		
+		for (int i = 0; i < 5; i++) {
+			boolean isIGL = false;
+			if (iglIndex == i) isIGL = true;
+			
+			CTAgent ct = new CTAgent(this.space, this.grid, isIGL);
+			TAgent t = new TAgent(this.space, this.grid, isIGL);
+			
+			container.acceptNewAgent("CT" + (i+1), ct).start();
+			container.acceptNewAgent("T" + (i+1), t).start();
+			context.add(ct); context.add(t);
+			
+			GridPoint ctSpawnPoint = server.generateSpawnPoint(true), tSpawnPoint = server.generateSpawnPoint(false);
+			
+			space.moveTo(ct, ctSpawnPoint.getX(), ctSpawnPoint.getY());
+			space.moveTo(t, tSpawnPoint.getX(), tSpawnPoint.getY());
+		}
+		
+		for (Object obj : context) {
+			NdPoint pt = space.getLocation(obj);
+			grid.moveTo(obj, (int) pt.getX(), (int) pt.getY());
+		}
 	}
 
 	@Override
 	public Context<?> build(Context<Object> context) {	
+		this.context = context;
 		context.setId("aiad-source");
 		
 		ContinuousSpaceFactory spaceFactory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null);

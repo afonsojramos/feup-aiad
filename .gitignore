@@ -16,6 +16,7 @@ integration/
 repast-licenses
 *.properties
 *.log
+*.log.1
 *.settings
 output/
 .temp/
