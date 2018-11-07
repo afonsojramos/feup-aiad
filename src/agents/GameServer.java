@@ -30,24 +30,12 @@ public class GameServer extends Agent {
 		System.out.println("Generated graph!");
 		
 		addBehaviour(new ListeningBehaviour());
-		this.informIsOperational();
+		this.broadcastMessage("SERVER_OPERATIONAL");
 	}
 	
 	@Override
 	public void takeDown() {
 		System.out.println("Server shutdown.");
-	}
-	
-	public void informIsOperational() {
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent("SERVER_OPERATIONAL");
-		
-		for (int i = 1; i <= 5; i++) {
-			msg.addReceiver(new AID(String.format("CT%d@aiadsource", i), true));
-			msg.addReceiver(new AID(String.format("T%d@aiadsource", i), true));
-		}
-		
-		send(msg);
 	}
 	
 	public static GameServer getInstance() {
@@ -69,10 +57,22 @@ public class GameServer extends Agent {
 		return new GridPoint(ThreadLocalRandom.current().nextInt(14, 21), 5);
 	}
 	
-	private void deductDamage(AID agent, int damage) {
+	private void sendMessage(String content, AID agent) {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent(String.format("SHOT %d", damage));
+		msg.setContent(content); 
 		msg.addReceiver(agent);
+		send(msg);
+	}
+	
+	private void broadcastMessage(String content) {
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent(content);
+		
+		for (int i = 1; i <= 5; i++) {
+			msg.addReceiver(new AID(String.format("CT%d@aiadsource", i), true));
+			msg.addReceiver(new AID(String.format("T%d@aiadsource", i), true));
+		}
+		
 		send(msg);
 	}
 	
@@ -85,11 +85,14 @@ public class GameServer extends Agent {
 			
 			if (msg != null) {
 				String[] info = msg.getContent().split(" ");
+				System.out.println(msg.getContent());
 				
 				// TODO: Probably convert these to enum.
 				if (info[0].equals("SHOT"))
-					deductDamage(new AID(info[1], true), Integer.parseInt(info[2]));
+					sendMessage(String.format("SHOT %s", info[2]), new AID(info[1], true));
 				
+				if (info[0].equals("DEAD"))
+					broadcastMessage(String.format("DEAD %s", msg.getSender().getName()));
 			}
 		}
 	}
