@@ -32,8 +32,11 @@ public class TAgent extends Agent {
 	
 	@Override
 	public void setup() {
-		System.out.println("Reporting in.");
+		System.out.println(this.getAID().getName() + " reporting in.");
 		// TODO: Add behaviours here.
+		
+		addBehaviour(new AliveBehaviour());
+		addBehaviour(new ListeningBehaviour());
 	}
 	
 	@Override
@@ -74,12 +77,20 @@ public class TAgent extends Agent {
 		}
 	}
 	
+	private void removeAgentFromMap() {
+		this.space.moveTo(this, 0, 0);
+		this.grid.moveTo(this, 0, 0);
+	}
+	
 	private class AliveBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void action() {
-			if (health <= 0) takeDown();
+			if (health <= 0) {
+				removeAgentFromMap();
+				takeDown();
+			}
 		}
 	}
 	
@@ -101,9 +112,13 @@ public class TAgent extends Agent {
 		
 		@Override
 		public void action() {
-			ACLMessage message = receive();
+			ACLMessage msg = receive();
 			
-			if (message != null) {
+			if (msg != null) {
+				String[] info = msg.getContent().split(" ");
+				
+				if (info[0].equals("SHOT"))
+					health -= Integer.parseInt(info[1]);
 				
 			} else {
 				block();

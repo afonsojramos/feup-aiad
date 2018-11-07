@@ -35,7 +35,7 @@ public class SourceLauncher extends RepastSLauncher {
 	
 	@Override
 	public String getName() {
-		return "AIAD Source";
+		return "aiadsource";
 	}
 
 	@Override
