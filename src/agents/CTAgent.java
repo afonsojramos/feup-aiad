@@ -1,5 +1,6 @@
 package agents;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -34,14 +35,14 @@ public class CTAgent extends Agent {
 	public void setup() {
 		System.out.println(this.getAID().getName() + " reporting in.");
 		
-		// TODO: Add behaviours here.
-		this.addBehaviour(new ListeningBehaviour());
-		this.addBehaviour(new WalkingBehaviour());
+		addBehaviour(new WalkingBehaviour());
+		addBehaviour(new AliveBehaviour());
+		addBehaviour(new ListeningBehaviour());
 	}
 	
 	@Override
 	public void takeDown() {
-		System.out.println("I've been killed.");
+		
 	}
 
 	private void createNewRoute(Node dstNode) {
@@ -52,12 +53,12 @@ public class CTAgent extends Agent {
 		this.onCourse = GameServer.getInstance().map.getDijkstra().getPath(dstNode);
 	}
 	
-	public void informTeammates(GridCell<TAgent> enemy) {
+	public void informTeammates(TAgent enemy, GridPoint pt) {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent("HELP");
+		msg.setContent(String.format("HELP ENEMY %s AT X=%d AND Y=%d", enemy.getAID(), pt.getX(), pt.getY()));
 		
 		for (int i = 0; i < 5; i++) {
-			String receiverAID = String.format("CT%d@AIAD Source", (i+1));
+			String receiverAID = String.format("CT%d@aiadsource", (i+1));
 			
 			if (this.getAID().getName().equals(receiverAID))
 				continue;
@@ -67,14 +68,35 @@ public class CTAgent extends Agent {
 		send(msg);
 	}
 	
+	public void shootEnemy(TAgent enemy) {
+		int damage = GameServer.getInstance().rollDamageOutput();
+		
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent(String.format("SHOT %s %d", enemy.getAID().getName(), damage));
+		
+		msg.addReceiver(new AID("server@aiadsource", true));
+		send(msg);
+	}
+	
 	public void checkSurroundings() {
 		GridPoint pt = grid.getLocation(this);
 		GridCellNgh<TAgent> nghCreator = new GridCellNgh<TAgent>(this.grid, pt, TAgent.class, 1, 1);
 		List<GridCell<TAgent>> gridCells = nghCreator.getNeighborhood(true);
 		
+		boolean alreadyShotOnThisTick = false;
+		
 		for (GridCell<TAgent> enemy : gridCells) {
-			informTeammates(enemy);
-		}
+			Iterator<TAgent> it = enemy.items().iterator();
+			
+			while (it.hasNext()) {
+				TAgent t = it.next();
+				this.informTeammates(t, enemy.getPoint());
+				
+				if (!alreadyShotOnThisTick) {
+					shootEnemy(t); alreadyShotOnThisTick = !alreadyShotOnThisTick;
+				}
+			}
+		}	
 	}
 	
 	public void moveTowards(Node node) {
@@ -88,7 +110,11 @@ public class CTAgent extends Agent {
 
 		@Override
 		public void action() {
-			if (health <= 0) takeDown();
+			if (health <= 0) {
+				System.out.println("I've been killed " + getAID().getName());
+				moveTowards(new Node("cemetery", 0, 0));
+				doDelete();
+			}
 		}
 	}
 	
@@ -97,8 +123,7 @@ public class CTAgent extends Agent {
 
 		@Override
 		public void action() {
-			// TODO: Check surroundings here.
-			int damage = GameServer.getInstance().rollDamageOutput();
+			checkSurroundings();
 			
 			if (!onCourse.isEmpty())
 				moveTowards(onCourse.removeFirst());
@@ -113,10 +138,15 @@ public class CTAgent extends Agent {
 			ACLMessage msg = receive();
 			
 			if (msg != null) {
-				if (msg.getContent().equals("SERVER_OPERATIONAL")) {
-
+				String[] info = msg.getContent().split(" ");
+				System.out.println(getAID().getName() + ": " + msg.getContent() + " hp: " + health);
+				
+				if (info[0].equals("SHOT"))
+					health -= Integer.parseInt(info[1]);
+				
+				if (info[0].equals("SERVER_OPERATIONAL")) {
 					// TODO: Delete this test code.
-					Node test = GameServer.getInstance().map.getGraph().getNode(new GridPoint(25, 25));
+					Node test = GameServer.getInstance().map.getGraph().getNode(new GridPoint(10, 42));
 					createNewRoute(test);
 				}
 			} else {
