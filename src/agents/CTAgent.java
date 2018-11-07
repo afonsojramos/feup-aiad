@@ -35,14 +35,14 @@ public class CTAgent extends Agent {
 	public void setup() {
 		System.out.println(this.getAID().getName() + " reporting in.");
 		
-		// TODO: Add behaviours here.
-		this.addBehaviour(new ListeningBehaviour());
-		this.addBehaviour(new WalkingBehaviour());
+		addBehaviour(new WalkingBehaviour());
+		addBehaviour(new AliveBehaviour());
+		addBehaviour(new ListeningBehaviour());
 	}
 	
 	@Override
 	public void takeDown() {
-		System.out.println("I've been killed.");
+		
 	}
 
 	private void createNewRoute(Node dstNode) {
@@ -96,8 +96,7 @@ public class CTAgent extends Agent {
 					shootEnemy(t); alreadyShotOnThisTick = !alreadyShotOnThisTick;
 				}
 			}
-		}
-		
+		}	
 	}
 	
 	public void moveTowards(Node node) {
@@ -106,13 +105,16 @@ public class CTAgent extends Agent {
 		grid.moveTo(this, node.getX(), node.getY());
 	}
 	
-	
 	private class AliveBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void action() {
-			if (health <= 0) takeDown();
+			if (health <= 0) {
+				System.out.println("I've been killed " + getAID().getName());
+				moveTowards(new Node("cemetery", 0, 0));
+				doDelete();
+			}
 		}
 	}
 	
@@ -137,13 +139,14 @@ public class CTAgent extends Agent {
 			
 			if (msg != null) {
 				String[] info = msg.getContent().split(" ");
+				System.out.println(getAID().getName() + ": " + msg.getContent() + " hp: " + health);
 				
 				if (info[0].equals("SHOT"))
 					health -= Integer.parseInt(info[1]);
 				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
 					// TODO: Delete this test code.
-					Node test = GameServer.getInstance().map.getGraph().getNode(new GridPoint(16, 5));
+					Node test = GameServer.getInstance().map.getGraph().getNode(new GridPoint(10, 42));
 					createNewRoute(test);
 				}
 			} else {

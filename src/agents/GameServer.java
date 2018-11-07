@@ -87,9 +87,8 @@ public class GameServer extends Agent {
 				String[] info = msg.getContent().split(" ");
 				
 				// TODO: Probably convert these to enum.
-				if (info[0].equals("SHOT")) {
+				if (info[0].equals("SHOT"))
 					deductDamage(new AID(info[1], true), Integer.parseInt(info[2]));
-				}
 				
 			}
 		}
