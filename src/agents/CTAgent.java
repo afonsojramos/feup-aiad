@@ -1,5 +1,6 @@
 package agents;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,10 @@ import repast.simphony.space.grid.GridPoint;
 import sajas.core.AID;
 import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
+import sajas.core.behaviours.SimpleBehaviour;
+import utils.Calls;
+import utils.Calls.Callouts;
+import utils.Calls.Positions;
 
 public class CTAgent extends Agent {
 	
@@ -24,11 +29,13 @@ public class CTAgent extends Agent {
 	private int health;
 	private boolean isIGL;
 	protected LinkedList<Node> onCourse;
+	protected CTAgent instance;
 	
 	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
 		this.space = space; this.grid = grid; this.isIGL = isIGL;
 		this.health = 100;
 		this.onCourse = new LinkedList<Node>();
+		this.instance = this;
 	}
 	
 	@Override
@@ -51,6 +58,20 @@ public class CTAgent extends Agent {
 
 		GameServer.getInstance().map.getDijkstra().execute(srcNode);
 		this.onCourse = GameServer.getInstance().map.getDijkstra().getPath(dstNode);
+	}
+	
+	private void createNewRoute(ArrayList<Node> nodes) {
+		GridPoint srcPoint = grid.getLocation(this);
+		Node srcNode = GameServer.getInstance().map.getGraph().getNode(srcPoint);
+		GameServer.getInstance().map.getDijkstra().execute(srcNode);
+			
+		this.onCourse = GameServer.getInstance().map.getDijkstra().getPath(nodes.get(0));
+		for(int i = 1; i < nodes.size(); i++) {
+			srcNode = nodes.get(i-1);
+			GameServer.getInstance().map.getDijkstra().execute(srcNode);
+			this.onCourse.addAll(GameServer.getInstance().map.getDijkstra().getPath(nodes.get(i)));
+		}
+
 	}
 	
 	public void informTeammates(TAgent enemy, GridPoint pt) {
@@ -105,6 +126,18 @@ public class CTAgent extends Agent {
 		grid.moveTo(this, node.getX(), node.getY());
 	}
 	
+	private void playCallout(Callouts callout, int id) {
+		Calls<CTAgent> calls= new Calls<CTAgent>();
+		Positions[] pos = calls.getCallouts(callout);
+		ArrayList<GridPoint> callPos = calls.getPosition(pos[id-1], instance);
+		
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		for(GridPoint temp : callPos) {
+			nodes.add(GameServer.getInstance().map.getGraph().getNode(temp));
+		}
+		createNewRoute(nodes);
+	}
+	
 	private class AliveBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
 
@@ -144,15 +177,52 @@ public class CTAgent extends Agent {
 				if (info[0].equals("SHOT"))
 					health -= Integer.parseInt(info[1]);
 				
+				if (info[0].equals("STRAT")) {
+					if (info[1].equals("DEFAULT")) {
+						playCallout(Callouts.DEFAULT, Integer.parseInt(info[2]));
+					
+					}
+				}
+				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
-					// TODO: Delete this test code.
-					Node test = GameServer.getInstance().map.getGraph().getNode(new GridPoint(10, 42));
-					createNewRoute(test);
+					if(isIGL) {
+						addBehaviour(new DelegateBehaviour());
+						playCallout(Callouts.DEFAULT, Integer.parseInt(getAID().getName().substring(2, 3)));
+					}
 				}
 			} else {
 				block();
 			}
 		}
+	}
+	
+	private class DelegateBehaviour extends SimpleBehaviour {
+
+		@Override
+		public void action() {						
+			
+			for (int i = 1; i <= 5; i++) {
+				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+				msg.setContent("STRAT DEFAULT " + i);
+				String receiverAID = String.format("CT%d@aiadsource", i);
+				
+				if (getAID().getName().equals(receiverAID))
+					continue;
+				
+				msg.addReceiver(new AID(receiverAID, true));
+
+				send(msg);
+			}
+			
+			
+		}
+
+		@Override
+		public boolean done() {
+			// TODO Auto-generated method stub
+			return true;
+		}
+		
 	}
 
 }
