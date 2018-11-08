@@ -23,11 +23,11 @@ public class TAgent extends Agent {
 	private Grid<Object> grid;
 	
 	private int health;
-	private boolean isIGL;
+	private boolean isIGL, hasBomb;
 	protected LinkedList<Node> onCourse;
 	
-	public TAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
-		this.space = space; this.grid = grid; this.isIGL = isIGL;
+	public TAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL, boolean hasBomb) {
+		this.space = space; this.grid = grid; this.isIGL = isIGL; this.hasBomb = hasBomb;
 		this.health = 100;
 		this.onCourse = new LinkedList<Node>();
 	}
@@ -121,7 +121,7 @@ public class TAgent extends Agent {
 		@Override
 		public void action() {
 			if (health <= 0) {
-				System.out.println("I've been killed " + getAID().getName());
+				//System.out.println("I've been killed " + getAID().getName());
 				warnServerOfDeath();
 				moveTowards(new Node("cemetery", 0, 0));
 				doDelete();
@@ -173,4 +173,9 @@ public class TAgent extends Agent {
 			}
 		}
 	}
+	
+	public boolean getHasBomb() {
+		return this.hasBomb;
+	}
+	
 }

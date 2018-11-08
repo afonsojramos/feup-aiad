@@ -120,7 +120,7 @@ public class CTAgent extends Agent {
 		@Override
 		public void action() {
 			if (health <= 0) {
-				System.out.println("I've been killed " + getAID().getName());
+				//System.out.println("I've been killed " + getAID().getName());
 				warnServerOfDeath();
 				moveTowards(new Node("cemetery", 0, 0));
 				doDelete();

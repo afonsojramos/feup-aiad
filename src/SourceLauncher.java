@@ -59,11 +59,13 @@ public class SourceLauncher extends RepastSLauncher {
 		int iglIndex = ThreadLocalRandom.current().nextInt(0, 5);
 		
 		for (int i = 0; i < 5; i++) {
-			boolean isIGL = false;
+			boolean isIGL = false, hasBomb = false;
+			
 			if (iglIndex == i) isIGL = true;
+			if (i == 0) hasBomb = true; 
 			
 			CTAgent ct = new CTAgent(this.space, this.grid, isIGL);
-			TAgent t = new TAgent(this.space, this.grid, isIGL);
+			TAgent t = new TAgent(this.space, this.grid, isIGL, hasBomb);
 			
 			container.acceptNewAgent("CT" + (i+1), ct).start();
 			container.acceptNewAgent("T" + (i+1), t).start();

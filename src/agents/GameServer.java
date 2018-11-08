@@ -85,7 +85,7 @@ public class GameServer extends Agent {
 			
 			if (msg != null) {
 				String[] info = msg.getContent().split(" ");
-				System.out.println(msg.getContent());
+				//System.out.println(msg.getContent());
 				
 				// TODO: Probably convert these to enum.
 				if (info[0].equals("SHOT"))

@@ -4,29 +4,29 @@
   <styles>
     <entry>
       <string>agents.CTAgent</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+      <string>ui.CTStyle</string>
     </entry>
     <entry>
       <string>agents.RadarBackground</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+      <string>ui.RadarStyle</string>
     </entry>
     <entry>
       <string>agents.TAgent</string>
-      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+      <string>ui.TStyle</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
       <string>agents.CTAgent</string>
-      <string>agents.CTAgent.style_0.xml</string>
+      <null/>
     </entry>
     <entry>
       <string>agents.RadarBackground</string>
-      <string>agents.RadarBackground.style_0.xml</string>
+      <null/>
     </entry>
     <entry>
       <string>agents.TAgent</string>
-      <string>agents.TAgent.style_0.xml</string>
+      <null/>
     </entry>
   </editedStyles>
   <netStyles/>
@@ -39,7 +39,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1168920016</hashCode>
+    <hashCode>265429748</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>space</layoutProjection>
