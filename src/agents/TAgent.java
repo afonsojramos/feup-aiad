@@ -178,4 +178,8 @@ public class TAgent extends Agent {
 		return this.hasBomb;
 	}
 	
+	public boolean getIsIGL() {
+		return this.isIGL;
+	}
+	
 }

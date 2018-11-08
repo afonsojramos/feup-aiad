@@ -172,5 +172,9 @@ public class CTAgent extends Agent {
 			}
 		}
 	}
+	
+	public boolean getIsIGL() {
+		return this.isIGL;
+	}
 
 }

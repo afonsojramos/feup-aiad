@@ -17,6 +17,9 @@ public class TStyle extends DefaultStyleOGL2D {
 		TAgent tAgent = ((TAgent) agent);
 		String logoPath = "src/assets/t-icon.png";
 		
+		if (tAgent.getIsIGL())
+			logoPath = "src/assets/t-icon-igl.png";
+		
 		if (tAgent.getHasBomb())
 			logoPath = "src/assets/t-icon-bomb.png";
 

@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.io.IOException;
 
 import agents.CTAgent;
+import agents.TAgent;
 import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 import saf.v3d.scene.Position;
 import saf.v3d.scene.VSpatial;
@@ -13,8 +14,14 @@ public class CTStyle extends DefaultStyleOGL2D {
 	
 	@Override
 	public VSpatial getVSpatial(Object agent, VSpatial spatial) {
+		CTAgent ctAgent = ((CTAgent) agent);
+		String logoPath = "src/assets/ct-icon.png";
+		
+		if (ctAgent.getIsIGL())
+			logoPath = "src/assets/ct-icon-igl.png";
+		
 		try {
-			spatial = shapeFactory.createImage("src/assets/ct-icon.png");
+			spatial = shapeFactory.createImage(logoPath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
