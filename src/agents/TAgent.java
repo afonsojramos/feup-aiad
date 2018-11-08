@@ -15,6 +15,7 @@ import repast.simphony.space.grid.GridPoint;
 import sajas.core.AID;
 import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
+import sajas.core.behaviours.TickerBehaviour;
 
 public class TAgent extends Agent {
 	
@@ -22,11 +23,11 @@ public class TAgent extends Agent {
 	private Grid<Object> grid;
 	
 	private int health;
-	private boolean isIGL;
+	private boolean isIGL, hasBomb;
 	protected LinkedList<Node> onCourse;
 	
-	public TAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
-		this.space = space; this.grid = grid; this.isIGL = isIGL;
+	public TAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL, boolean hasBomb) {
+		this.space = space; this.grid = grid; this.isIGL = isIGL; this.hasBomb = hasBomb;
 		this.health = 100;
 		this.onCourse = new LinkedList<Node>();
 	}
@@ -35,7 +36,7 @@ public class TAgent extends Agent {
 	public void setup() {
 		System.out.println(this.getAID().getName() + " reporting in.");
 		
-		addBehaviour(new WalkingBehaviour());
+		addBehaviour(new WalkingBehaviour(this, 1000));
 		addBehaviour(new AliveBehaviour());
 		addBehaviour(new ListeningBehaviour());
 	}
@@ -74,6 +75,8 @@ public class TAgent extends Agent {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent(String.format("SHOT %s %d", enemy.getAID().getName(), damage));
 		
+		System.out.println("i, " + getAID().getName() + " shot " + enemy.getAID().getName());
+		
 		msg.addReceiver(new AID("server@aiadsource", true));
 		send(msg);
 	}
@@ -105,24 +108,36 @@ public class TAgent extends Agent {
 		grid.moveTo(this, node.getX(), node.getY());
 	}
 	
+	public void warnServerOfDeath() {
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent("DEAD");
+		msg.addReceiver(new AID("server@aiadsource", true));
+		send(msg);
+	}
+	
 	private class AliveBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void action() {
 			if (health <= 0) {
-				System.out.println("I've been killed " + getAID().getName());
+				//System.out.println("I've been killed " + getAID().getName());
+				warnServerOfDeath();
 				moveTowards(new Node("cemetery", 0, 0));
 				doDelete();
 			}
 		}
 	}
 	
-	private class WalkingBehaviour extends CyclicBehaviour {
+	private class WalkingBehaviour extends TickerBehaviour {
 		private static final long serialVersionUID = 1L;
+		
+		public WalkingBehaviour(Agent a, long period) {
+			super(a, period);
+		}
 
 		@Override
-		public void action() {
+		protected void onTick() {
 			checkSurroundings();
 			
 			if (!onCourse.isEmpty())
@@ -139,10 +154,14 @@ public class TAgent extends Agent {
 			
 			if (msg != null) {
 				String[] info = msg.getContent().split(" ");
-				System.out.println(getAID().getName() + ": " + msg.getContent() + " hp: " + health);
 				
-				if (info[0].equals("SHOT"))
+				if (info[0].equals("SHOT")) {
+					System.out.println("i, " + getAID().getName() + " got tagged by " + info[1]);
 					health -= Integer.parseInt(info[1]);
+				}
+				
+				if (info[0].equals("DEAD"))
+					System.out.println(String.format("DEAD: %s", info[1]));
 				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
 					// TODO: Delete this test code.
@@ -154,4 +173,13 @@ public class TAgent extends Agent {
 			}
 		}
 	}
+	
+	public boolean getHasBomb() {
+		return this.hasBomb;
+	}
+	
+	public boolean getIsIGL() {
+		return this.isIGL;
+	}
+	
 }
