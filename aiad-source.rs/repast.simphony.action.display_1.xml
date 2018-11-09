@@ -11,6 +11,10 @@
       <string>ui.RadarStyle</string>
     </entry>
     <entry>
+      <string>agents.BombAgent</string>
+      <string>ui.BombStyle</string>
+    </entry>
+    <entry>
       <string>agents.TAgent</string>
       <string>ui.TStyle</string>
     </entry>
@@ -22,6 +26,10 @@
     </entry>
     <entry>
       <string>agents.RadarBackground</string>
+      <null/>
+    </entry>
+    <entry>
+      <string>agents.BombAgent</string>
       <null/>
     </entry>
     <entry>
@@ -39,7 +47,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>265429748</hashCode>
+    <hashCode>-924275611</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>space</layoutProjection>
@@ -52,6 +60,10 @@
     <entry>
       <string>agents.RadarBackground</string>
       <int>0</int>
+    </entry>
+    <entry>
+      <string>agents.BombAgent</string>
+      <int>3</int>
     </entry>
     <entry>
       <string>agents.TAgent</string>

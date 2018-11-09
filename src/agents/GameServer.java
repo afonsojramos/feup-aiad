@@ -21,7 +21,7 @@ public class GameServer extends Agent {
 	public Grid<Object> grid;
 	protected Map map;
 	
-	protected ArrayList<String> aliveAgents;
+	private ArrayList<String> aliveAgents;
 	
 	private int MIN_DMG = 20, MAX_DMG = 33, CRIT_DMG = 80, CRIT_CHANCE = 25;
 	

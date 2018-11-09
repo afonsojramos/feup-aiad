@@ -150,6 +150,15 @@ public class TAgent extends Agent {
 		send(msg);
 	}
 	
+	public void informDroppedBomb() {
+		GridPoint gp = this.grid.getLocation(this);
+		
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent(String.format("DROP %d %d", gp.getX(), gp.getY()));
+		msg.addReceiver(new AID("server@aiadsource", true));
+		send(msg);
+	}
+	
 	public void nominateNewIGL() {
 		ArrayList<String> aliveAgents = GameServer.getInstance().getAliveAgents();
 		String newIGL = null;
@@ -174,8 +183,12 @@ public class TAgent extends Agent {
 		GridPoint myLocal = this.grid.getLocation(this); 
 		GridPoint bsAPoint = Calls.getBombsiteLocation(Positions.A_SITE), bsBPoint = Calls.getBombsiteLocation(Positions.B_SITE);
 		
-		if ((myLocal.getX() == bsAPoint.getX() && myLocal.getY() == bsAPoint.getY()) || (myLocal.getX() == bsBPoint.getX() && myLocal.getY() == bsBPoint.getY()))
-			addBehaviour(new BombPlantBehaviour(this, 3000));
+		if ((myLocal.getX() == bsAPoint.getX() && myLocal.getY() == bsAPoint.getY()) || (myLocal.getX() == bsBPoint.getX() && myLocal.getY() == bsBPoint.getY())) {
+			System.out.println("Planting bomb... 3 seconds remaining.");
+			addBehaviour(new BombPlantBehaviour(this, 3000, myLocal.getX(), myLocal.getY()));
+			
+			flipBombState();
+		}
 	}
 	
 	private class AliveBehaviour extends CyclicBehaviour {
@@ -186,6 +199,10 @@ public class TAgent extends Agent {
 			if (health <= 0) {
 				//System.out.println("I've been killed " + getAID().getName());
 				warnServerOfDeath();
+				
+				if (hasBomb)
+					
+					
 				moveTowards(new Node("cemetery", 0, 0));
 				doDelete();
 			}
@@ -292,13 +309,22 @@ public class TAgent extends Agent {
 	}
 	
 	private class BombPlantBehaviour extends WakerBehaviour {
+		private static final long serialVersionUID = 1L;
+		
+		private int x, y;
 
-		public BombPlantBehaviour(Agent a, long timeout) {
+		public BombPlantBehaviour(Agent a, long timeout, int x, int y) {
 			super(a, timeout);
+			this.x = x; this.y = y;
 		}
 		
 		@Override
 		public void onWake() {
+			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+			msg.setContent(String.format("ARM %d %d", this.x, this.y));
+			msg.addReceiver(new AID("bomb@aiadsource", true));
+			send(msg);
+			
 			System.out.println("Bomb has been planted!");
 			stop();
 		}
@@ -311,6 +337,10 @@ public class TAgent extends Agent {
 	
 	public boolean getIsIGL() {
 		return this.isIGL;
+	}
+	
+	public void flipBombState() {
+		this.hasBomb ^= this.hasBomb;
 	}
 	
 }

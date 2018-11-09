@@ -3,6 +3,7 @@ import sajas.wrapper.ContainerController;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import agents.BombAgent;
 import agents.CTAgent;
 import agents.GameServer;
 import agents.RadarBackground;
@@ -55,7 +56,7 @@ public class SourceLauncher extends RepastSLauncher {
 		GameServer server = GameServer.getInstance();
 		container.acceptNewAgent("server", server).start();
 		context.add(server);
-		
+
 		int iglIndex = ThreadLocalRandom.current().nextInt(0, 5);
 		
 		for (int i = 0; i < 5; i++) {
@@ -76,6 +77,10 @@ public class SourceLauncher extends RepastSLauncher {
 			space.moveTo(ct, ctSpawnPoint.getX(), ctSpawnPoint.getY());
 			space.moveTo(t, tSpawnPoint.getX(), tSpawnPoint.getY());
 		}
+		
+		BombAgent bomb = new BombAgent(this.grid, this.space);
+		container.acceptNewAgent("bomb", bomb).start();
+		context.add(bomb);
 		
 		for (Object obj : context) {
 			NdPoint pt = space.getLocation(obj);
