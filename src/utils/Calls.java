@@ -33,6 +33,17 @@ public class Calls<T> {
     		return null;
     	}
     }
+    
+    public static GridPoint getBombsiteLocation(Positions position) {
+    	switch (position) {
+    		case A_SITE:
+    			return new GridPoint(39,42);
+    		case B_SITE:
+    			return new GridPoint(10,42);
+    		default:
+    			return null;
+    	}
+    }
 
     public ArrayList<GridPoint> getPosition(Positions position, T type){
         ArrayList<GridPoint> pos = new ArrayList<GridPoint>();

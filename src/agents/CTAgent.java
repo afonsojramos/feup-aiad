@@ -43,7 +43,7 @@ public class CTAgent extends Agent {
 	public void setup() {
 		System.out.println(this.getAID().getName() + " reporting in.");
 		
-		addBehaviour(new WalkingBehaviour(this, 1000));
+		addBehaviour(new WalkingBehaviour(this, 200));
 		addBehaviour(new AliveBehaviour());
 		addBehaviour(new ListeningBehaviour());
 	}
@@ -147,6 +147,26 @@ public class CTAgent extends Agent {
 		send(msg);
 	}
 	
+	public void nominateNewIGL() {
+		ArrayList<String> aliveAgents = GameServer.getInstance().getAliveAgents();
+		String newIGL = null;
+		
+		for (String agent : aliveAgents) {
+			if (agent.matches("\\w{2}\\d")) {
+				newIGL = agent;
+				break;
+			}
+		}
+		
+		if (newIGL == null)
+			return;
+		
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent("IGL");
+		msg.addReceiver(new AID(String.format("%s@aiadsource", newIGL), true));
+		send(msg);
+	}
+	
 	private class AliveBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
 
@@ -154,6 +174,9 @@ public class CTAgent extends Agent {
 		public void action() {
 			if (health <= 0) {
 				//System.out.println("I've been killed " + getAID().getName());
+				if (isIGL)
+					nominateNewIGL();
+				
 				warnServerOfDeath();
 				moveTowards(new Node("cemetery", 0, 0));
 				doDelete();
@@ -194,6 +217,9 @@ public class CTAgent extends Agent {
 				
 				if (info[0].equals("DEAD"))
 					System.out.println(String.format("DEAD: %s", info[1]));
+				
+				if (info[0].equals("IGL"))
+					isIGL = true;
 				
 				if (info[0].equals("STRAT")) {
 					if (info[1].equals("DEFAULT")) {

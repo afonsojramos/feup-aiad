@@ -1,5 +1,6 @@
 package agents;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,9 @@ import sajas.core.AID;
 import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
 import sajas.core.behaviours.TickerBehaviour;
+import sajas.core.behaviours.WakerBehaviour;
+import utils.Calls;
+import utils.Calls.Positions;
 
 public class TAgent extends Agent {
 	
@@ -36,7 +40,7 @@ public class TAgent extends Agent {
 	public void setup() {
 		System.out.println(this.getAID().getName() + " reporting in.");
 		
-		addBehaviour(new WalkingBehaviour(this, 1000));
+		addBehaviour(new WalkingBehaviour(this, 200));
 		addBehaviour(new AliveBehaviour());
 		addBehaviour(new ListeningBehaviour());
 	}
@@ -115,6 +119,34 @@ public class TAgent extends Agent {
 		send(msg);
 	}
 	
+	public void nominateNewIGL() {
+		ArrayList<String> aliveAgents = GameServer.getInstance().getAliveAgents();
+		String newIGL = null;
+		
+		for (String agent : aliveAgents) {
+			if (agent.matches("\\w{1}\\d")) {
+				newIGL = agent;
+				break;
+			}
+		}
+		
+		if (newIGL == null)
+			return;
+		
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent("IGL");
+		msg.addReceiver(new AID(String.format("%s@aiadsource", newIGL), true));
+		send(msg);
+	}
+	
+	public void attemptPlantBomb() {
+		GridPoint myLocal = this.grid.getLocation(this); 
+		GridPoint bsAPoint = Calls.getBombsiteLocation(Positions.A_SITE), bsBPoint = Calls.getBombsiteLocation(Positions.B_SITE);
+		
+		if ((myLocal.getX() == bsAPoint.getX() && myLocal.getY() == bsAPoint.getY()) || (myLocal.getX() == bsBPoint.getX() && myLocal.getY() == bsBPoint.getY()))
+			addBehaviour(new BombPlantBehaviour(this, 3000));
+	}
+	
 	private class AliveBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
 
@@ -142,6 +174,9 @@ public class TAgent extends Agent {
 			
 			if (!onCourse.isEmpty())
 				moveTowards(onCourse.removeFirst());
+			
+			if (getHasBomb())
+				attemptPlantBomb();
 		}
 	}
 	
@@ -163,6 +198,9 @@ public class TAgent extends Agent {
 				if (info[0].equals("DEAD"))
 					System.out.println(String.format("DEAD: %s", info[1]));
 				
+				if (info[0].equals("IGL"))
+					isIGL = true;
+				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
 					// TODO: Delete this test code.
 					Node test = GameServer.getInstance().map.getGraph().getNode(new GridPoint(10, 42));
@@ -172,6 +210,20 @@ public class TAgent extends Agent {
 				block();
 			}
 		}
+	}
+	
+	private class BombPlantBehaviour extends WakerBehaviour {
+
+		public BombPlantBehaviour(Agent a, long timeout) {
+			super(a, timeout);
+		}
+		
+		@Override
+		public void onWake() {
+			System.out.println("Bomb has been planted!");
+			stop();
+		}
+		
 	}
 	
 	public boolean getHasBomb() {

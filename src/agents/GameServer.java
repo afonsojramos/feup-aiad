@@ -10,6 +10,8 @@ import sajas.core.AID;
 import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
 import sajas.wrapper.ContainerController;
+
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameServer extends Agent {
@@ -19,9 +21,16 @@ public class GameServer extends Agent {
 	public Grid<Object> grid;
 	protected Map map;
 	
+	protected ArrayList<String> aliveAgents;
+	
 	private int MIN_DMG = 20, MAX_DMG = 33, CRIT_DMG = 80, CRIT_CHANCE = 25;
 	
 	private GameServer() {
+		this.aliveAgents = new ArrayList<String>();
+		
+		for (int i = 1; i <= 5; i++) {
+			this.aliveAgents.add("T" + i); this.aliveAgents.add("CT" + i);			
+		}
 	}
 	
 	@Override
@@ -91,10 +100,16 @@ public class GameServer extends Agent {
 				if (info[0].equals("SHOT"))
 					sendMessage(String.format("SHOT %s", info[2]), new AID(info[1], true));
 				
-				if (info[0].equals("DEAD"))
+				if (info[0].equals("DEAD")) {
+					aliveAgents.remove(msg.getSender().getLocalName());
 					broadcastMessage(String.format("DEAD %s", msg.getSender().getName()));
+				}
 			}
 		}
+	}
+	
+	public ArrayList<String> getAliveAgents() {
+		return this.aliveAgents;
 	}
 	
 }
