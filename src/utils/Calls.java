@@ -71,18 +71,18 @@ public class Calls<T> {
                 pos.add(new GridPoint(22,37));
 
                 if(type instanceof TAgent)
-                    pos.add(new GridPoint(10,42));
+                    pos.add(new GridPoint(10,43));
                 return pos;
 
             case B_TUNNELS:
                 pos.add(new GridPoint(5,26));
 
                 if(type instanceof TAgent)
-                    pos.add(new GridPoint(10,42));
+                    pos.add(new GridPoint(10,43));
                 return pos;
 
             case B_SITE:
-                pos.add(new GridPoint(10,42));
+                pos.add(new GridPoint(10,43));
                 return pos;
 
             default:
