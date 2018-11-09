@@ -222,10 +222,8 @@ public class CTAgent extends Agent {
 					isIGL = true;
 				
 				if (info[0].equals("STRAT")) {
-					if (info[1].equals("DEFAULT")) {
-						playCallout(Callouts.DEFAULT, Integer.parseInt(info[2]));
+					playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
 					
-					}
 				}
 				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
