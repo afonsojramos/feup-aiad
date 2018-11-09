@@ -119,6 +119,15 @@ public class TAgent extends Agent {
 		send(msg);
 	}
 	
+	public void informDroppedBomb() {
+		GridPoint gp = this.grid.getLocation(this);
+		
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent(String.format("DROP %d %d", gp.getX(), gp.getY()));
+		msg.addReceiver(new AID("server@aiadsource", true));
+		send(msg);
+	}
+	
 	public void nominateNewIGL() {
 		ArrayList<String> aliveAgents = GameServer.getInstance().getAliveAgents();
 		String newIGL = null;
@@ -159,6 +168,10 @@ public class TAgent extends Agent {
 			if (health <= 0) {
 				//System.out.println("I've been killed " + getAID().getName());
 				warnServerOfDeath();
+				
+				if (hasBomb)
+					
+					
 				moveTowards(new Node("cemetery", 0, 0));
 				doDelete();
 			}

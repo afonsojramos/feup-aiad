@@ -51,7 +51,16 @@ public class BombAgent extends Agent {
 					context.space.moveTo(context, Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 					
 					addBehaviour(new ExplosionCountdown(context, 1000));
+					state = State.PLANTED;
 				}
+				
+				if (info[0].equals("DROP")) {
+					context.grid.moveTo(context, Integer.parseInt(info[1]), Integer.parseInt(info[2]));
+					context.space.moveTo(context, Integer.parseInt(info[1]), Integer.parseInt(info[2]));
+					
+					state = State.DROPPED;
+				}
+				
 			}
 		}
 	}
