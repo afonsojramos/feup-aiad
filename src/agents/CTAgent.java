@@ -238,7 +238,7 @@ public class CTAgent extends Agent {
 				if (info[0].equals("SERVER_OPERATIONAL")) {
 					if(isIGL) {
 						addBehaviour(new DelegateBehaviour());
-						//playCallout(Callouts.DEFAULT, Integer.parseInt(getAID().getName().substring(2, 3)));
+						playCallout(Callouts.DEFAULT, Integer.parseInt(getAID().getName().substring(2, 3)));
 					}
 				}
 			} else {
@@ -254,7 +254,7 @@ public class CTAgent extends Agent {
 			
 			for (int i = 1; i <= 5; i++) {
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-				msg.setContent("STRAT " + Callouts.A_SPLIT + " " + i);
+				msg.setContent("STRAT DEFAULT " + i);
 				String receiverAID = String.format("CT%d@aiadsource", i);
 				
 				msg.addReceiver(new AID(receiverAID, true));
