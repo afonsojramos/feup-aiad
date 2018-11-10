@@ -3,9 +3,11 @@ package agents;
 import jade.lang.acl.ACLMessage;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
+import sajas.core.AID;
 import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
 import sajas.core.behaviours.TickerBehaviour;
+import utils.Calls.Callouts;
 
 public class BombAgent extends Agent {
 	
@@ -59,6 +61,19 @@ public class BombAgent extends Agent {
 					context.space.moveTo(context, Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 					
 					state = State.DROPPED;
+										
+					ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+					msg2.setContent("DROPPED " + info[1] + " " + info[2]);
+
+					for (int i = 1; i <= 5; i++) {
+						String receiverAIDCT = String.format("CT%d@aiadsource", i);
+						String receiverAIDT = String.format("T%d@aiadsource", i);
+						
+						msg2.addReceiver(new AID(receiverAIDCT, true));
+						msg2.addReceiver(new AID(receiverAIDT, true));
+					}
+					
+					send(msg2);
 				}
 				
 			}
