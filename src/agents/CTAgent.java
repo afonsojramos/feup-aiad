@@ -221,15 +221,24 @@ public class CTAgent extends Agent {
 				if (info[0].equals("IGL"))
 					isIGL = true;
 				
-				if (info[0].equals("STRAT")) {
+				if (info[0].equals("STRAT")) 
 					playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
 					
+				if (info[0].equals("DROPPED")) {
+					
+					
+					if (health > 0) {
+						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
+						Node destNode = GameServer.getInstance().map.getGraph().getNode(dest);
+						System.out.println(getAID().getName() + " going to protect Bomb!");
+						createNewRoute(destNode);						
+					}
 				}
 				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
 					if(isIGL) {
 						addBehaviour(new DelegateBehaviour());
-						playCallout(Callouts.DEFAULT, Integer.parseInt(getAID().getName().substring(2, 3)));
+						//playCallout(Callouts.DEFAULT, Integer.parseInt(getAID().getName().substring(2, 3)));
 					}
 				}
 			} else {
@@ -245,11 +254,8 @@ public class CTAgent extends Agent {
 			
 			for (int i = 1; i <= 5; i++) {
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-				msg.setContent("STRAT DEFAULT " + i);
+				msg.setContent("STRAT " + Callouts.A_SPLIT + " " + i);
 				String receiverAID = String.format("CT%d@aiadsource", i);
-				
-				if (getAID().getName().equals(receiverAID))
-					continue;
 				
 				msg.addReceiver(new AID(receiverAID, true));
 
