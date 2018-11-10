@@ -124,10 +124,4 @@ public class Dijkstra {
         Collections.reverse(path);
         return path;
     }
-    
-    private void addLane(String laneId, int sourceLocNo, int destLocNo, int duration) {
-        Edge lane = new Edge(laneId, nodes.get(sourceLocNo), nodes.get(destLocNo), duration );
-        edges.add(lane);
-    }
-
 }
