@@ -21,6 +21,7 @@ import utils.Calls;
 import utils.Calls.Callouts;
 import utils.Calls.Positions;
 import sajas.core.behaviours.TickerBehaviour;
+import sajas.core.behaviours.WakerBehaviour;
 
 public class CTAgent extends Agent {
 	
@@ -31,11 +32,13 @@ public class CTAgent extends Agent {
 	private boolean isIGL;
 	protected LinkedList<Node> onCourse;
 	protected CTAgent instance;
+	protected Node bombNode;
 	
 	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
 		this.space = space; this.grid = grid; this.isIGL = isIGL;
 		this.health = 100;
 		this.onCourse = new LinkedList<Node>();
+		this.bombNode = null;
 		this.instance = this;
 	}
 	
@@ -171,6 +174,8 @@ public class CTAgent extends Agent {
 	private class WalkingBehaviour extends TickerBehaviour {
 		private static final long serialVersionUID = 1L;
 		
+		private boolean bombIsAlreadyBeingDefused = false;
+		
 		public WalkingBehaviour(Agent a, long period) {
 			super(a, period);
 		}
@@ -181,6 +186,15 @@ public class CTAgent extends Agent {
 			
 			if (!onCourse.isEmpty())
 				moveTowards(onCourse.removeFirst());
+			
+			if (bombIsAlreadyBeingDefused || bombNode == null)
+				return;
+			
+			GridPoint myLocale = grid.getLocation(instance);
+			if (myLocale.getX() == bombNode.getX() && myLocale.getY() == bombNode.getY()) {
+				addBehaviour(new DefuseBehaviour(instance, 5000));
+				this.bombIsAlreadyBeingDefused ^= this.bombIsAlreadyBeingDefused;
+			}
 		}
 	}
 	
@@ -211,11 +225,12 @@ public class CTAgent extends Agent {
 				}
 				
 				if (info[0].equals("PLANTED")) {
+					// TODO: Add bomb state to GameServer.
 					GridPoint pt = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
-					Node node = GameServer.getInstance().map.getGraph().getNode(pt);
+					bombNode = GameServer.getInstance().map.getGraph().getNode(pt);
 					
 					onCourse.clear();
-					createNewRoute(node);
+					createNewRoute(bombNode);
 				}
 				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
@@ -256,6 +271,21 @@ public class CTAgent extends Agent {
 			// TODO Auto-generated method stub
 			return true;
 		}
+	}
+	
+	private class DefuseBehaviour extends WakerBehaviour {
+		private static final long serialVersionUID = 1L;
+		
+		public DefuseBehaviour(Agent a, long timeout) {
+			super(a, timeout);
+		}
+		
+		@Override
+		public void onWake() {
+			System.out.println("Bomb has been defused!");
+			stop();
+		}
+		
 	}
 		
 	public boolean getIsIGL() {

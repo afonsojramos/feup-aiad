@@ -22,7 +22,7 @@ public class BombAgent extends Agent {
 	
 	public BombAgent(Grid<Object> grid, ContinuousSpace<Object> space) {
 		this.grid = grid; this.space = space;
-		this.secondsRemaining = 5;
+		this.secondsRemaining = 20;
 		this.state = State.CARRIED;
 	}
 	
