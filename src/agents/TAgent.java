@@ -29,7 +29,7 @@ public class TAgent extends Agent {
 	private Grid<Object> grid;
 	
 	private int health;
-	private boolean isIGL, hasBomb;
+	private boolean isIGL, hasBomb, canAdvance;
 	protected LinkedList<Node> onCourse;
 	protected TAgent instance;
 	
@@ -38,6 +38,7 @@ public class TAgent extends Agent {
 		this.health = 100;
 		this.onCourse = new LinkedList<Node>();
 		this.instance = this;
+		this.canAdvance = true;
 	}
 	
 	@Override
@@ -87,13 +88,14 @@ public class TAgent extends Agent {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent(String.format("SHOT %s %d", enemy.getAID().getName(), damage));
 		
-		System.out.println("i, " + getAID().getName() + " shot " + enemy.getAID().getName());
+		System.out.println("INFO: " + getAID().getName() + " shot " + enemy.getAID().getName());
 		
 		msg.addReceiver(new AID("server@aiadsource", true));
 		send(msg);
 	}
 	
 	public void checkSurroundings() {
+		this.canAdvance = true;
 		GridPoint pt = grid.getLocation(this);
 		GridCellNgh<CTAgent> nghCreator = new GridCellNgh<CTAgent>(this.grid, pt, CTAgent.class, 1, 1);
 		List<GridCell<CTAgent>> gridCells = nghCreator.getNeighborhood(true);
@@ -109,8 +111,9 @@ public class TAgent extends Agent {
 				if (!alreadyShotOnThisTick) {
 					shootEnemy(ct); alreadyShotOnThisTick = !alreadyShotOnThisTick;
 				}
+				this.canAdvance = false;
 			}
-		}	
+		}
 	}
 	
 	public void moveTowards(Node node) {
@@ -137,6 +140,8 @@ public class TAgent extends Agent {
 		msg.setContent("DEAD");
 		msg.addReceiver(new AID("server@aiadsource", true));
 		send(msg);
+		
+		System.out.println(String.format("DEAD: %s", this.getAID().getName()));
 	}
 	
 	public void informDroppedBomb() {
@@ -212,10 +217,10 @@ public class TAgent extends Agent {
 		protected void onTick() {
 			checkSurroundings();
 			
-			if (!onCourse.isEmpty())
+			if (!onCourse.isEmpty() && canAdvance)
 				moveTowards(onCourse.removeFirst());
 			
-			if (getHasBomb())
+			if (getHasBomb() && canAdvance)
 				attemptPlantBomb();
 		}
 	}
@@ -231,12 +236,12 @@ public class TAgent extends Agent {
 				String[] info = msg.getContent().split(" ");
 				
 				if (info[0].equals("SHOT")) {
-					System.out.println("i, " + getAID().getName() + " got tagged by " + info[1]);
+					System.out.println("INFO: " + getAID().getName() + " got tagged by " + info[1]);
 					health -= Integer.parseInt(info[1]);
 				}
 				
-				if (info[0].equals("DEAD"))
-					System.out.println(String.format("DEAD: %s", info[1]));
+				/*if (info[0].equals("DEAD"))
+					System.out.println(String.format("DEAD: %s", info[1]));*/
 				
 				if (info[0].equals("IGL"))
 					isIGL = true;

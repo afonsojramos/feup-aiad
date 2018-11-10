@@ -29,17 +29,18 @@ public class CTAgent extends Agent {
 	private Grid<Object> grid;
 	
 	private int health;
-	private boolean isIGL;
+	private boolean isIGL, canAdvance;
 	protected LinkedList<Node> onCourse;
 	protected CTAgent instance;
 	protected Node bombNode;
 	
 	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
 		this.space = space; this.grid = grid; this.isIGL = isIGL;
-		this.health = 125;
+		this.health = 250;
 		this.onCourse = new LinkedList<Node>();
 		this.bombNode = null;
 		this.instance = this;
+		this.canAdvance = true;
 	}
 	
 	@Override
@@ -88,13 +89,14 @@ public class CTAgent extends Agent {
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent(String.format("SHOT %s %d", enemy.getAID().getName(), damage));
-		System.out.println("i, " + getAID().getName() + " shot " + enemy.getAID().getName());
+		System.out.println("INFO: " + getAID().getName() + " shot " + enemy.getAID().getName());
 		
 		msg.addReceiver(new AID("server@aiadsource", true));
 		send(msg);
 	}
 	
 	public void checkSurroundings() {
+		this.canAdvance = true;
 		GridPoint pt = grid.getLocation(this);
 		GridCellNgh<TAgent> nghCreator = new GridCellNgh<TAgent>(this.grid, pt, TAgent.class, 1, 1);
 		List<GridCell<TAgent>> gridCells = nghCreator.getNeighborhood(true);
@@ -110,7 +112,8 @@ public class CTAgent extends Agent {
 				if (!alreadyShotOnThisTick) {
 					shootEnemy(t); alreadyShotOnThisTick = !alreadyShotOnThisTick;
 				}
-			}
+				this.canAdvance = false;
+			}			
 		}
 	}
 	
@@ -137,6 +140,8 @@ public class CTAgent extends Agent {
 		msg.setContent("DEAD");
 		msg.addReceiver(new AID("server@aiadsource", true));
 		send(msg);
+		
+		System.out.println(String.format("DEAD: %s", this.getAID().getName()));
 	}
 	
 	public void nominateNewIGL() {
@@ -189,7 +194,7 @@ public class CTAgent extends Agent {
 		protected void onTick() {
 			checkSurroundings();
 			
-			if (!onCourse.isEmpty())
+			if (!onCourse.isEmpty() && canAdvance)
 				moveTowards(onCourse.removeFirst());
 			
 			if (bombIsAlreadyBeingDefused || bombNode == null)
@@ -214,12 +219,12 @@ public class CTAgent extends Agent {
 				String[] info = msg.getContent().split(" ");
 				
 				if (info[0].equals("SHOT")) {
-					System.out.println("i, " + getAID().getName() + " got tagged by " + info[1]);
+					System.out.println("INFO: " + getAID().getName() + " got tagged by " + info[1]);
 					health -= Integer.parseInt(info[1]);
 				}
 				
-				if (info[0].equals("DEAD"))
-					System.out.println(String.format("DEAD: %s", info[1]));
+				/*if (info[0].equals("DEAD"))
+					System.out.println(String.format("DEAD: %s", info[1]));*/
 				
 				if (info[0].equals("IGL"))
 					isIGL = true;
