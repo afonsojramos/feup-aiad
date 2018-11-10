@@ -21,6 +21,7 @@ import utils.Calls;
 import utils.Calls.Callouts;
 import utils.Calls.Positions;
 import sajas.core.behaviours.TickerBehaviour;
+import sajas.core.behaviours.WakerBehaviour;
 
 public class CTAgent extends Agent {
 	
@@ -31,11 +32,13 @@ public class CTAgent extends Agent {
 	private boolean isIGL;
 	protected LinkedList<Node> onCourse;
 	protected CTAgent instance;
+	protected Node bombNode;
 	
 	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
 		this.space = space; this.grid = grid; this.isIGL = isIGL;
 		this.health = 125;
 		this.onCourse = new LinkedList<Node>();
+		this.bombNode = null;
 		this.instance = this;
 	}
 	
@@ -75,21 +78,6 @@ public class CTAgent extends Agent {
 
 	}
 	
-	public void informTeammates(TAgent enemy, GridPoint pt) {
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent(String.format("HELP ENEMY %s AT X=%d AND Y=%d", enemy.getAID(), pt.getX(), pt.getY()));
-		
-		for (int i = 0; i < 5; i++) {
-			String receiverAID = String.format("CT%d@aiadsource", (i+1));
-			
-			if (this.getAID().getName().equals(receiverAID))
-				continue;
-			
-			msg.addReceiver(new AID(receiverAID, true));
-		}
-		send(msg);
-	}
-	
 	public void shootEnemy(TAgent enemy) {
 		int damage = GameServer.getInstance().rollDamageOutput();
 		
@@ -113,7 +101,6 @@ public class CTAgent extends Agent {
 			
 			while (it.hasNext()) {
 				TAgent t = it.next();
-				this.informTeammates(t, enemy.getPoint());
 				
 				if (!alreadyShotOnThisTick) {
 					shootEnemy(t); alreadyShotOnThisTick = !alreadyShotOnThisTick;
@@ -187,6 +174,8 @@ public class CTAgent extends Agent {
 	private class WalkingBehaviour extends TickerBehaviour {
 		private static final long serialVersionUID = 1L;
 		
+		private boolean bombIsAlreadyBeingDefused = false;
+		
 		public WalkingBehaviour(Agent a, long period) {
 			super(a, period);
 		}
@@ -197,6 +186,15 @@ public class CTAgent extends Agent {
 			
 			if (!onCourse.isEmpty())
 				moveTowards(onCourse.removeFirst());
+			
+			if (bombIsAlreadyBeingDefused || bombNode == null)
+				return;
+			
+			GridPoint myLocale = grid.getLocation(instance);
+			if (myLocale.getX() == bombNode.getX() && myLocale.getY() == bombNode.getY()) {
+				addBehaviour(new DefuseBehaviour(instance, 5000));
+				this.bombIsAlreadyBeingDefused ^= this.bombIsAlreadyBeingDefused;
+			}
 		}
 	}
 	
@@ -235,6 +233,15 @@ public class CTAgent extends Agent {
 					}
 				}
 				
+				if (info[0].equals("PLANTED")) {
+					// TODO: Add bomb state to GameServer.
+					GridPoint pt = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
+					bombNode = GameServer.getInstance().map.getGraph().getNode(pt);
+					
+					onCourse.clear();
+					createNewRoute(bombNode);
+				}
+				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
 					if(isIGL) 
 						addBehaviour(new DelegateBehaviour());
@@ -269,6 +276,21 @@ public class CTAgent extends Agent {
 			// TODO Auto-generated method stub
 			return true;
 		}
+	}
+	
+	private class DefuseBehaviour extends WakerBehaviour {
+		private static final long serialVersionUID = 1L;
+		
+		public DefuseBehaviour(Agent a, long timeout) {
+			super(a, timeout);
+		}
+		
+		@Override
+		public void onWake() {
+			System.out.println("Bomb has been defused!");
+			stop();
+		}
+		
 	}
 		
 	public boolean getIsIGL() {

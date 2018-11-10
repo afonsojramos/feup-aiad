@@ -39,7 +39,7 @@ public class Calls<T> {
     		case A_SITE:
     			return new GridPoint(39,42);
     		case B_SITE:
-    			return new GridPoint(10,42);
+    			return new GridPoint(10,43);
     		default:
     			return null;
     	}
