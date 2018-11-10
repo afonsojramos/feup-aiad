@@ -34,7 +34,7 @@ public class CTAgent extends Agent {
 	
 	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
 		this.space = space; this.grid = grid; this.isIGL = isIGL;
-		this.health = 100;
+		this.health = 125;
 		this.onCourse = new LinkedList<Node>();
 		this.instance = this;
 	}
