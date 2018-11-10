@@ -155,8 +155,10 @@ public class TAgent extends Agent {
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent(String.format("DROP %d %d", gp.getX(), gp.getY()));
-		msg.addReceiver(new AID("server@aiadsource", true));
+		msg.addReceiver(new AID("bomb@aiadsource", true));
 		send(msg);
+		
+		System.out.println("Bomb has been dropped in x = " + gp.getX() + ", y = " + gp.getY());
 	}
 	
 	public void nominateNewIGL() {
@@ -201,6 +203,7 @@ public class TAgent extends Agent {
 				warnServerOfDeath();
 				
 				if (hasBomb)
+					informDroppedBomb();
 					
 					
 				moveTowards(new Node("cemetery", 0, 0));
