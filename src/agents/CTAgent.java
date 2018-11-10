@@ -234,7 +234,6 @@ public class CTAgent extends Agent {
 					
 				if (info[0].equals("DROPPED")) {
 					
-					
 					if (health > 0) {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 						Node destNode = GameServer.getInstance().map.getGraph().getNode(dest);

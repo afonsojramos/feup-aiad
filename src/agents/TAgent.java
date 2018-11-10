@@ -251,6 +251,19 @@ public class TAgent extends Agent {
 					
 				}
 				
+				if (info[0].equals("DROPPED")) {
+					
+					if (health > 0) {
+						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
+						Node destNode = GameServer.getInstance().map.getGraph().getNode(dest);
+						System.out.println(getAID().getName() + " going to get the Bomb!");
+						createNewRoute(destNode);						
+					}
+					
+					//TODO: First terrorist needs to claim the bomb and send a message for the others to resume the strat
+					
+				}
+				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
 					if(isIGL) {
 						addBehaviour(new DelegateBehaviour());
