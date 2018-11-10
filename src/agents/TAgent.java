@@ -60,6 +60,11 @@ public class TAgent extends Agent {
 
 		GameServer.getInstance().map.getDijkstra().execute(srcNode);
 		this.onCourse = GameServer.getInstance().map.getDijkstra().getPath(dstNode);
+		
+		if(this.onCourse == null) {  // If Dijkstra returns null (in the case we already are in the destiny position) add the destiny node to the LinkedList
+			this.onCourse = new LinkedList<Node>();
+			this.onCourse.add(dstNode);
+		}
 	}
 	
 	private void createNewRoute(ArrayList<Node> nodes) {
@@ -123,7 +128,7 @@ public class TAgent extends Agent {
 		for(GridPoint temp : callPos) {
 			nodes.add(GameServer.getInstance().map.getGraph().getNode(temp));
 		}
-		System.out.println(nodes.get(nodes.size() -1).getX() + " " + nodes.get(nodes.size() -1).getX() + " <--");
+		
 		createNewRoute(nodes);
 	}
 	
@@ -170,7 +175,7 @@ public class TAgent extends Agent {
 		GridPoint bsAPoint = Calls.getBombsiteLocation(Positions.A_SITE), bsBPoint = Calls.getBombsiteLocation(Positions.B_SITE);
 		
 		if ((myLocal.getX() == bsAPoint.getX() && myLocal.getY() == bsAPoint.getY()) || (myLocal.getX() == bsBPoint.getX() && myLocal.getY() == bsBPoint.getY())) {
-			System.out.println("Planting bomb... 3 seconds remaining.");
+			System.out.println(this.getAID().getName() + ": Planting bomb... 3 seconds remaining.");
 			addBehaviour(new BombPlantBehaviour(this, 3000, myLocal.getX(), myLocal.getY()));
 			
 			flipBombState();

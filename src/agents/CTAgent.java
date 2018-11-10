@@ -62,6 +62,11 @@ public class CTAgent extends Agent {
 
 		GameServer.getInstance().map.getDijkstra().execute(srcNode);
 		this.onCourse = GameServer.getInstance().map.getDijkstra().getPath(dstNode);
+		
+		if(this.onCourse == null) {  // If Dijkstra returns null (in the case we already are in the destiny position) add the destiny node to the LinkedList
+			this.onCourse = new LinkedList<Node>();
+			this.onCourse.add(dstNode);
+		}
 	}
 	
 	private void createNewRoute(ArrayList<Node> nodes) {
