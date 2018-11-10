@@ -236,10 +236,9 @@ public class CTAgent extends Agent {
 				}
 				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
-					if(isIGL) {
+					if(isIGL) 
 						addBehaviour(new DelegateBehaviour());
-						playCallout(Callouts.DEFAULT, Integer.parseInt(getAID().getName().substring(2, 3)));
-					}
+						
 				}
 			} else {
 				block();
