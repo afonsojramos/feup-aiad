@@ -3,6 +3,7 @@ package agents;
 import jade.lang.acl.ACLMessage;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
+import sajas.core.AID;
 import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
 import sajas.core.behaviours.TickerBehaviour;
@@ -36,6 +37,16 @@ public class BombAgent extends Agent {
 		System.out.println("Bomb has exploded/been defused!");
 	}
 	
+	public void broadcastCTs(String message) {
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent(message);
+		
+		for (int i = 0; i < 5; i++)
+			msg.addReceiver(new AID(String.format("CT%d@aiadsource", (i+1)), true));
+		
+		send(msg);
+	}
+	
 	private class ListeningBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
 
@@ -50,6 +61,7 @@ public class BombAgent extends Agent {
 					context.grid.moveTo(context, Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 					context.space.moveTo(context, Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 					
+					broadcastCTs(String.format("PLANTED %s %s", info[1], info[2]));
 					addBehaviour(new ExplosionCountdown(context, 1000));
 					state = State.PLANTED;
 				}

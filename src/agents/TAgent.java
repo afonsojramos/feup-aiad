@@ -76,21 +76,6 @@ public class TAgent extends Agent {
 
 	}
 	
-	public void informTeammates(CTAgent enemy, GridPoint pt) {
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent(String.format("HELP ENEMY %s AT X=%d AND Y=%d", enemy.getAID(), pt.getX(), pt.getY()));
-		
-		for (int i = 0; i < 5; i++) {
-			String receiverAID = String.format("T%d@aiadsource", (i+1));
-			
-			if (this.getAID().getName().equals(receiverAID))
-				continue;
-			
-			msg.addReceiver(new AID(receiverAID, true));
-		}
-		send(msg);
-	}
-	
 	public void shootEnemy(CTAgent enemy) {
 		int damage = GameServer.getInstance().rollDamageOutput();
 		
@@ -115,7 +100,6 @@ public class TAgent extends Agent {
 			
 			while (it.hasNext()) {
 				CTAgent ct = it.next();
-				this.informTeammates(ct, enemy.getPoint());
 				
 				if (!alreadyShotOnThisTick) {
 					shootEnemy(ct); alreadyShotOnThisTick = !alreadyShotOnThisTick;
@@ -155,7 +139,7 @@ public class TAgent extends Agent {
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent(String.format("DROP %d %d", gp.getX(), gp.getY()));
-		msg.addReceiver(new AID("server@aiadsource", true));
+		msg.addReceiver(new AID("bomb@aiadsource", true));
 		send(msg);
 	}
 	

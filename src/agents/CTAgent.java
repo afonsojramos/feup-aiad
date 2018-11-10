@@ -75,21 +75,6 @@ public class CTAgent extends Agent {
 
 	}
 	
-	public void informTeammates(TAgent enemy, GridPoint pt) {
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setContent(String.format("HELP ENEMY %s AT X=%d AND Y=%d", enemy.getAID(), pt.getX(), pt.getY()));
-		
-		for (int i = 0; i < 5; i++) {
-			String receiverAID = String.format("CT%d@aiadsource", (i+1));
-			
-			if (this.getAID().getName().equals(receiverAID))
-				continue;
-			
-			msg.addReceiver(new AID(receiverAID, true));
-		}
-		send(msg);
-	}
-	
 	public void shootEnemy(TAgent enemy) {
 		int damage = GameServer.getInstance().rollDamageOutput();
 		
@@ -113,7 +98,6 @@ public class CTAgent extends Agent {
 			
 			while (it.hasNext()) {
 				TAgent t = it.next();
-				this.informTeammates(t, enemy.getPoint());
 				
 				if (!alreadyShotOnThisTick) {
 					shootEnemy(t); alreadyShotOnThisTick = !alreadyShotOnThisTick;
@@ -224,6 +208,14 @@ public class CTAgent extends Agent {
 				if (info[0].equals("STRAT")) {
 					playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
 					
+				}
+				
+				if (info[0].equals("PLANTED")) {
+					GridPoint pt = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
+					Node node = GameServer.getInstance().map.getGraph().getNode(pt);
+					
+					onCourse.clear();
+					createNewRoute(node);
 				}
 				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
