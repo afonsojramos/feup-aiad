@@ -114,6 +114,27 @@ public class TAgent extends Agent {
 				this.canAdvance = false;
 			}
 		}
+		
+
+		GridCellNgh<BombAgent> bombGrid = new GridCellNgh<BombAgent>(this.grid, pt, BombAgent.class, 1, 1);
+		List<GridCell<BombAgent>> bombGridCells = bombGrid.getNeighborhood(true);
+		
+		for (GridCell<BombAgent> bomb : bombGridCells) {
+			Iterator<BombAgent> it = bomb.items().iterator();
+			
+			while (it.hasNext()) {
+				BombAgent t = it.next();
+				
+				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+				msg.setContent(String.format("SECUREDBOMB"));
+				msg.addReceiver(new AID("bomb@aiadsource", true));
+				send(msg);
+				
+				System.out.println(getAID().getName() + ": Bomb is mine!");
+				
+				flipBombState();
+			}		
+		}
 	}
 	
 	public void moveTowards(Node node) {
@@ -247,8 +268,8 @@ public class TAgent extends Agent {
 					isIGL = true;
 				
 				if (info[0].equals("STRAT")) {
-					playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
-					
+					//playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
+					playCallout(Callouts.A_SPLIT, Integer.parseInt(info[2]));
 				}
 				
 				if (info[0].equals("DROPPED")) {
