@@ -28,18 +28,19 @@ public class CTAgent extends Agent {
 	private Grid<Object> grid;
 	
 	private int health;
-	private boolean isIGL, canAdvance;
+	private boolean isIGL, canAdvance, isBombPlanted;
 	protected LinkedList<Node> onCourse;
 	protected CTAgent instance;
 	protected Node bombNode;
 	
 	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
 		this.space = space; this.grid = grid; this.isIGL = isIGL;
-		this.health = 250;
+		this.health = 150;
 		this.onCourse = new LinkedList<Node>();
 		this.bombNode = null;
 		this.instance = this;
 		this.canAdvance = true;
+		this.isBombPlanted = false;
 	}
 	
 	@Override
@@ -170,10 +171,10 @@ public class CTAgent extends Agent {
 		public void action() {
 			if (health <= 0) {
 				//System.out.println("I've been killed " + getAID().getName());
+				warnServerOfDeath();
 				if (isIGL)
 					nominateNewIGL();
 				
-				warnServerOfDeath();
 				moveTowards(new Node("cemetery", 0, 0));
 				doDelete();
 			}
@@ -200,7 +201,7 @@ public class CTAgent extends Agent {
 				return;
 			
 			GridPoint myLocale = grid.getLocation(instance);
-			if (myLocale.getX() == bombNode.getX() && myLocale.getY() == bombNode.getY()) {
+			if (myLocale.getX() == bombNode.getX() && myLocale.getY() == bombNode.getY() && isBombPlanted) {
 				addBehaviour(new DefuseBehaviour(instance, 5000));
 				this.bombIsAlreadyBeingDefused = true;
 			}
@@ -235,20 +236,19 @@ public class CTAgent extends Agent {
 					
 					if (health > 0) {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
-						Node destNode = GameServer.getInstance().map.getGraph().getNode(dest);
-						System.out.println(getAID().getName() + " going to protect Bomb!");
-						createNewRoute(destNode);		
-						
 						bombNode = GameServer.getInstance().map.getGraph().getNode(dest);
+						System.out.println(getAID().getName() + " going to protect Bomb!");
+						createNewRoute(bombNode);		
 					}
 				}
 				
 				if (info[0].equals("PLANTED")) {
+					isBombPlanted = true;
 					// TODO: Add bomb state to GameServer.
 					GridPoint pt = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 					bombNode = GameServer.getInstance().map.getGraph().getNode(pt);
 					
-					onCourse.clear();
+					//onCourse.clear();
 					createNewRoute(bombNode);
 				}
 				

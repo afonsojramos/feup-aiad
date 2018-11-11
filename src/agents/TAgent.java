@@ -79,6 +79,9 @@ public class TAgent extends Agent {
 		for(int i = 1; i < nodes.size(); i++) {
 			srcNode = nodes.get(i-1);
 			GameServer.getInstance().map.getDijkstra().execute(srcNode);
+			if(this.onCourse == null) {
+				this.onCourse = new LinkedList<Node>();
+			}
 			this.onCourse.addAll(GameServer.getInstance().map.getDijkstra().getPath(nodes.get(i)));
 		}
 
@@ -196,7 +199,11 @@ public class TAgent extends Agent {
 		public void action() {
 			if (health <= 0) {
 				//System.out.println("I've been killed " + getAID().getName());
+				
 				warnServerOfDeath();
+				
+				if (isIGL)
+					nominateNewIGL();
 				
 				if (hasBomb)
 					informDroppedBomb();
@@ -271,11 +278,10 @@ public class TAgent extends Agent {
 					
 					if (health > 0) {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
-						Node destNode = GameServer.getInstance().map.getGraph().getNode(dest);
-						System.out.println(getAID().getName() + " going to get the Bomb!");
-						createNewRoute(destNode);	
-						
 						bombNode = GameServer.getInstance().map.getGraph().getNode(dest);
+						System.out.println(getAID().getName() + " going to get the Bomb!");
+						createNewRoute(bombNode);	
+						
 					}
 					
 					//TODO: First terrorist needs to claim the bomb and send a message for the others to resume the strat
@@ -368,7 +374,7 @@ public class TAgent extends Agent {
 	}
 	
 	public void flipBombState() {
-		this.hasBomb ^= this.hasBomb;
+		this.hasBomb = !this.hasBomb;
 	}
 	
 }
