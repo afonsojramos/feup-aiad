@@ -35,7 +35,7 @@ public class CTAgent extends Agent {
 	
 	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
 		this.space = space; this.grid = grid; this.isIGL = isIGL;
-		this.health = 150;
+		this.health = 200;
 		this.onCourse = new LinkedList<Node>();
 		this.bombNode = null;
 		this.instance = this;
@@ -265,6 +265,8 @@ public class CTAgent extends Agent {
 	}
 	
 	private class DelegateBehaviour extends SimpleBehaviour {
+
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void action() {						

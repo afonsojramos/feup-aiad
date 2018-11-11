@@ -2,7 +2,6 @@ package agents;
 
 import jade.lang.acl.ACLMessage;
 import maps.Map;
-import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import sajas.core.AID;
@@ -15,7 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GameServer extends Agent {
 	
 	private static GameServer instance = null;
-	private ContinuousSpace<Object> space;
 	public Grid<Object> grid;
 	protected Map map;
 	

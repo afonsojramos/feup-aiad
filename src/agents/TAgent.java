@@ -304,6 +304,8 @@ public class TAgent extends Agent {
 	
 	private class DelegateBehaviour extends SimpleBehaviour {
 
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void action() {
 			int call;
@@ -323,8 +325,10 @@ public class TAgent extends Agent {
 					callout = Callouts.A_SPLIT;	
 					break;
 				case 3:
-				default:
 					callout = Callouts.B_SPLIT;	
+					break;
+				default:
+					callout = Callouts.A_SPLIT;
 					break;
 			}
 		

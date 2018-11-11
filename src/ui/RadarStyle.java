@@ -2,13 +2,11 @@ package ui;
 
 import java.io.IOException;
 
-import repast.simphony.gis.styleEditor.SimpleMarkFactory;
 import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 import saf.v3d.ShapeFactory2D;
 import saf.v3d.scene.VSpatial;
 
 public class RadarStyle extends DefaultStyleOGL2D {
-	private static SimpleMarkFactory markFac = new SimpleMarkFactory();
 	
 	@Override
 	public void init(ShapeFactory2D factory) {
