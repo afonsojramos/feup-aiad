@@ -29,7 +29,7 @@ public class TAgent extends Agent {
 	private Grid<Object> grid;
 	
 	private int health;
-	private boolean isIGL, hasBomb, canAdvance;
+	private boolean isIGL, hasBomb, canAdvance, wasBombDropped;
 	protected LinkedList<Node> onCourse;
 	protected TAgent instance;
 	protected Node bombNode;
@@ -41,6 +41,7 @@ public class TAgent extends Agent {
 		this.instance = this;
 		this.canAdvance = true;
 		this.bombNode = null;
+		this.wasBombDropped = false;
 	}
 	
 	@Override
@@ -270,11 +271,12 @@ public class TAgent extends Agent {
 					isIGL = true;
 				
 				if (info[0].equals("STRAT")) {
-					//playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
-					playCallout(Callouts.A_SPLIT, Integer.parseInt(info[2]));
+					playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
+					//playCallout(Callouts.A_SPLIT, Integer.parseInt(info[2]));
 				}
 				
 				if (info[0].equals("DROPPED")) {
+					wasBombDropped = true;
 					
 					if (health > 0) {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
@@ -303,18 +305,22 @@ public class TAgent extends Agent {
 	private class DelegateBehaviour extends SimpleBehaviour {
 
 		@Override
-		public void action() {						
-			int call = ThreadLocalRandom.current().nextInt(4);
+		public void action() {
+			int call;
+			if(wasBombDropped)
+				call = ThreadLocalRandom.current().nextInt(2);
+			else
+				call = ThreadLocalRandom.current().nextInt(4);
 			Callouts callout;
 			switch(call) {
 				case 0:
 					callout = Callouts.A_RUSH;	
 					break;
 				case 1:
-					callout = Callouts.A_SPLIT;	
+					callout = Callouts.B_RUSH;	
 					break;
 				case 2:
-					callout = Callouts.B_RUSH;	
+					callout = Callouts.A_SPLIT;	
 					break;
 				case 3:
 				default:
