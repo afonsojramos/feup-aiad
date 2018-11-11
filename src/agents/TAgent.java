@@ -235,7 +235,6 @@ public class TAgent extends Agent {
 					
 					System.out.println(getAID().getName() + ": Bomb is mine!");
 					
-					hasBomb = true;
 					flipBombState();
 				}
 			}
