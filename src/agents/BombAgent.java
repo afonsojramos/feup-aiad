@@ -47,6 +47,16 @@ public class BombAgent extends Agent {
 		send(msg);
 	}
 	
+	public void broadcastTs(String message) {
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setContent(message);
+		
+		for (int i = 0; i < 5; i++)
+			msg.addReceiver(new AID(String.format("T%d@aiadsource", (i+1)), true));
+		
+		send(msg);
+	}
+	
 	private class ListeningBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
 
@@ -64,6 +74,12 @@ public class BombAgent extends Agent {
 					broadcastCTs(String.format("PLANTED %s %s", info[1], info[2]));
 					addBehaviour(new ExplosionCountdown(context, 1000));
 					state = State.PLANTED;
+				}
+				
+				if (info[0].equals("SECUREDBOMB")) {		
+					broadcastCTs(String.format("SERVER_OPERATIONAL"));
+					broadcastTs(String.format("SERVER_OPERATIONAL"));
+					state = State.CARRIED;
 				}
 				
 				if (info[0].equals("DROP")) {

@@ -32,6 +32,7 @@ public class TAgent extends Agent {
 	private boolean isIGL, hasBomb, canAdvance;
 	protected LinkedList<Node> onCourse;
 	protected TAgent instance;
+	protected Node bombNode;
 	
 	public TAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL, boolean hasBomb) {
 		this.space = space; this.grid = grid; this.isIGL = isIGL; this.hasBomb = hasBomb;
@@ -39,6 +40,7 @@ public class TAgent extends Agent {
 		this.onCourse = new LinkedList<Node>();
 		this.instance = this;
 		this.canAdvance = true;
+		this.bombNode = null;
 	}
 	
 	@Override
@@ -222,6 +224,20 @@ public class TAgent extends Agent {
 			
 			if (getHasBomb() && canAdvance)
 				attemptPlantBomb();
+			else if (bombNode != null) {
+				GridPoint myLocale = grid.getLocation(instance);
+				if (myLocale.getX() == bombNode.getX() && myLocale.getY() == bombNode.getY()) {
+					
+					ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+					msg.setContent(String.format("SECUREDBOMB"));
+					msg.addReceiver(new AID("bomb@aiadsource", true));
+					send(msg);
+					
+					System.out.println(getAID().getName() + ": Bomb is mine!");
+					
+					flipBombState();
+				}
+			}
 		}
 	}
 	
@@ -247,8 +263,8 @@ public class TAgent extends Agent {
 					isIGL = true;
 				
 				if (info[0].equals("STRAT")) {
-					playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
-					
+					//playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
+					playCallout(Callouts.A_SPLIT, Integer.parseInt(info[2]));
 				}
 				
 				if (info[0].equals("DROPPED")) {
@@ -257,7 +273,9 @@ public class TAgent extends Agent {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 						Node destNode = GameServer.getInstance().map.getGraph().getNode(dest);
 						System.out.println(getAID().getName() + " going to get the Bomb!");
-						createNewRoute(destNode);						
+						createNewRoute(destNode);	
+						
+						bombNode = GameServer.getInstance().map.getGraph().getNode(dest);
 					}
 					
 					//TODO: First terrorist needs to claim the bomb and send a message for the others to resume the strat
@@ -265,10 +283,10 @@ public class TAgent extends Agent {
 				}
 				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
-					if(isIGL) {
+					if(isIGL) 
 						addBehaviour(new DelegateBehaviour());
-					}
-				
+					
+					bombNode = null;			
 				}
 			} else {
 				block();

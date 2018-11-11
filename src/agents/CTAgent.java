@@ -112,7 +112,7 @@ public class CTAgent extends Agent {
 					shootEnemy(t); alreadyShotOnThisTick = !alreadyShotOnThisTick;
 				}
 				this.canAdvance = false;
-			}			
+			}		
 		}
 	}
 	
@@ -193,16 +193,16 @@ public class CTAgent extends Agent {
 		protected void onTick() {
 			checkSurroundings();
 			
-			if (!onCourse.isEmpty() && canAdvance)
+			if (health > 0 && onCourse != null && !onCourse.isEmpty() && canAdvance)
 				moveTowards(onCourse.removeFirst());
 			
-			if (bombIsAlreadyBeingDefused || bombNode == null)
+			if (this.bombIsAlreadyBeingDefused || bombNode == null)
 				return;
 			
 			GridPoint myLocale = grid.getLocation(instance);
 			if (myLocale.getX() == bombNode.getX() && myLocale.getY() == bombNode.getY()) {
 				addBehaviour(new DefuseBehaviour(instance, 5000));
-				this.bombIsAlreadyBeingDefused ^= this.bombIsAlreadyBeingDefused;
+				this.bombIsAlreadyBeingDefused = true;
 			}
 		}
 	}
@@ -237,7 +237,9 @@ public class CTAgent extends Agent {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 						Node destNode = GameServer.getInstance().map.getGraph().getNode(dest);
 						System.out.println(getAID().getName() + " going to protect Bomb!");
-						createNewRoute(destNode);						
+						createNewRoute(destNode);		
+						
+						bombNode = GameServer.getInstance().map.getGraph().getNode(dest);
 					}
 				}
 				
@@ -253,7 +255,8 @@ public class CTAgent extends Agent {
 				if (info[0].equals("SERVER_OPERATIONAL")) {
 					if(isIGL) 
 						addBehaviour(new DelegateBehaviour());
-						
+					
+					bombNode = null;						
 				}
 			} else {
 				block();
