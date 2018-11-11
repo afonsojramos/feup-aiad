@@ -238,7 +238,9 @@ public class CTAgent extends Agent {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 						Node destNode = GameServer.getInstance().map.getGraph().getNode(dest);
 						System.out.println(getAID().getName() + " going to protect Bomb!");
-						createNewRoute(destNode);						
+						createNewRoute(destNode);		
+						
+						bombNode = GameServer.getInstance().map.getGraph().getNode(dest);
 					}
 				}
 				
@@ -254,7 +256,8 @@ public class CTAgent extends Agent {
 				if (info[0].equals("SERVER_OPERATIONAL")) {
 					if(isIGL) 
 						addBehaviour(new DelegateBehaviour());
-						
+					
+					bombNode = null;						
 				}
 			} else {
 				block();
