@@ -113,7 +113,7 @@ public class CTAgent extends Agent {
 					shootEnemy(t); alreadyShotOnThisTick = !alreadyShotOnThisTick;
 				}
 				this.canAdvance = false;
-			}			
+			}		
 		}
 	}
 	
@@ -194,16 +194,16 @@ public class CTAgent extends Agent {
 		protected void onTick() {
 			checkSurroundings();
 			
-			if (!onCourse.isEmpty() && canAdvance)
+			if (health > 0 && onCourse != null && !onCourse.isEmpty() && canAdvance)
 				moveTowards(onCourse.removeFirst());
 			
-			if (bombIsAlreadyBeingDefused || bombNode == null)
+			if (this.bombIsAlreadyBeingDefused || bombNode == null)
 				return;
 			
 			GridPoint myLocale = grid.getLocation(instance);
 			if (myLocale.getX() == bombNode.getX() && myLocale.getY() == bombNode.getY()) {
 				addBehaviour(new DefuseBehaviour(instance, 5000));
-				this.bombIsAlreadyBeingDefused ^= this.bombIsAlreadyBeingDefused;
+				this.bombIsAlreadyBeingDefused = true;
 			}
 		}
 	}
