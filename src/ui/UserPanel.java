@@ -1,5 +1,4 @@
 package ui;
-import java.util.Arrays;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;

@@ -7,7 +7,6 @@ import sajas.core.AID;
 import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
 import sajas.core.behaviours.TickerBehaviour;
-import utils.Calls.Callouts;
 
 public class BombAgent extends Agent {
 	

@@ -1,7 +1,6 @@
 package agents;
 
 import jade.lang.acl.ACLMessage;
-import jade.wrapper.StaleProxyException;
 import maps.Map;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
@@ -9,7 +8,6 @@ import repast.simphony.space.grid.GridPoint;
 import sajas.core.AID;
 import sajas.core.Agent;
 import sajas.core.behaviours.CyclicBehaviour;
-import sajas.wrapper.ContainerController;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;

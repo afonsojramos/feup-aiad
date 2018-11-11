@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import agents.BombAgent;
 import agents.BombAgent.State;
-import agents.CTAgent;
 import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 import saf.v3d.scene.VSpatial;
 
