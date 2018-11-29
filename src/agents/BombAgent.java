@@ -76,6 +76,12 @@ public class BombAgent extends Agent {
 					state = State.PLANTED;
 				}
 				
+				if (info[0].equals("DEFUSED")) {
+					//TODO finished everything with the Defuse
+					
+					doDelete();
+				}
+				
 				if (info[0].equals("SECUREDBOMB")) {		
 					broadcastCTs(String.format("SERVER_OPERATIONAL"));
 					broadcastTs(String.format("SERVER_OPERATIONAL"));

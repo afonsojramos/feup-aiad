@@ -300,6 +300,10 @@ public class CTAgent extends Agent {
 		
 		@Override
 		public void onWake() {
+			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+			msg.setContent("DEFUSED");
+			msg.addReceiver(new AID("bomb@aiadsource", true));
+			send(msg);
 			System.out.println("Bomb has been defused!");
 			stop();
 		}
