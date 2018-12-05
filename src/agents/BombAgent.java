@@ -77,7 +77,7 @@ public class BombAgent extends Agent {
 				}
 				
 				if (info[0].equals("DEFUSED")) {
-					//TODO finished everything with the Defuse
+					//TODO Inform defuse and CT win
 					
 					doDelete();
 				}
@@ -124,8 +124,10 @@ public class BombAgent extends Agent {
 		protected void onTick() {
 			secondsRemaining--;
 			
-			if (secondsRemaining <= 0)
+			if (secondsRemaining <= 0) {
+				//TODO Inform of exploded and T wins
 				doDelete();	
+			}
 			
 			System.out.println(String.format("%d until explosion!", secondsRemaining));
 		}

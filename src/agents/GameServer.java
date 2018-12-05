@@ -81,6 +81,27 @@ public class GameServer extends Agent {
 		send(msg);
 	}
 	
+	private int checkAllDead() {
+		boolean existsCT = false, existsT = false;
+		if(this.aliveAgents.size() == 0)
+			return -1;
+		
+		for (String agent : this.aliveAgents) {
+			if(agent.contains("T"))
+				existsT = true;
+			else if( agent.contains("CT"))
+				existsCT = true;
+		}
+		
+		
+		if(!existsT)
+			return 1;
+		else if(!existsCT)
+			return 2;
+		else
+			return 0;
+	}
+	
 	private class ListeningBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
 		
@@ -99,6 +120,27 @@ public class GameServer extends Agent {
 				if (info[0].equals("DEAD")) {
 					aliveAgents.remove(msg.getSender().getLocalName());
 					broadcastMessage(String.format("DEAD %s", msg.getSender().getName()));
+					
+					// TODO check if bomb is planted in case all Ts are dead but that doesnt make CTs win cuz it can explode
+					int teamDead = checkAllDead();
+					switch (teamDead) {
+						case 1:
+							//Ts are dead
+							broadcastMessage("WINNER CT OPPOSITETEAMDEAD");
+							break;
+						case 2:
+							//CTs are dead
+							broadcastMessage("WINNER T OPPOSITETEAMDEAD");
+							break;
+							
+						case -1:
+							// All dead ???
+							break;
+						default:
+							//Both teams with alive agents
+							break;
+					}
+					//TODO Send message of winner in case of all team dead
 				}
 			}
 		}
