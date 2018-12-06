@@ -1,6 +1,7 @@
 import sajas.sim.repasts.RepastSLauncher;
 import sajas.wrapper.ContainerController;
 
+import java.io.FileNotFoundException;
 import java.util.concurrent.ThreadLocalRandom;
 
 import agents.BombAgent;
@@ -45,12 +46,12 @@ public class SourceLauncher extends RepastSLauncher {
 		
 		try {
 			launchAgents(container);
-		} catch (StaleProxyException e) {
+		} catch (StaleProxyException | FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void launchAgents(ContainerController container) throws StaleProxyException {
+	private void launchAgents(ContainerController container) throws StaleProxyException, FileNotFoundException {
 		GameServer server = GameServer.getInstance();
 		container.acceptNewAgent("server", server).start();
 		context.add(server);

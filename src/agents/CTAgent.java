@@ -1,5 +1,6 @@
 package agents;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -28,14 +29,16 @@ public class CTAgent extends Agent {
 	private Grid<Object> grid;
 	
 	private int health;
+	private GameServer gameServer;
 	private boolean isIGL, canAdvance, isBombPlanted;
 	protected LinkedList<Node> onCourse;
 	protected CTAgent instance;
 	protected Node bombNode;
 	
-	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) {
+	public CTAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL) throws FileNotFoundException {
+		this.gameServer = GameServer.getInstance();
 		this.space = space; this.grid = grid; this.isIGL = isIGL;
-		this.health = 200;
+		this.health = gameServer.CT_HEALTH;;
 		this.onCourse = new LinkedList<Node>();
 		this.bombNode = null;
 		this.instance = this;
@@ -59,10 +62,10 @@ public class CTAgent extends Agent {
 
 	private void createNewRoute(Node dstNode) {
 		GridPoint srcPoint = grid.getLocation(this);
-		Node srcNode = GameServer.getInstance().map.getGraph().getNode(srcPoint);
+		Node srcNode = gameServer.map.getGraph().getNode(srcPoint);
 
-		GameServer.getInstance().map.getDijkstra().execute(srcNode);
-		this.onCourse = GameServer.getInstance().map.getDijkstra().getPath(dstNode);
+		gameServer.map.getDijkstra().execute(srcNode);
+		this.onCourse = gameServer.map.getDijkstra().getPath(dstNode);
 		
 		if(this.onCourse == null) {  // If Dijkstra returns null (in the case we already are in the destiny position) add the destiny node to the LinkedList
 			this.onCourse = new LinkedList<Node>();
@@ -72,20 +75,20 @@ public class CTAgent extends Agent {
 	
 	private void createNewRoute(ArrayList<Node> nodes) {
 		GridPoint srcPoint = grid.getLocation(this);
-		Node srcNode = GameServer.getInstance().map.getGraph().getNode(srcPoint);
-		GameServer.getInstance().map.getDijkstra().execute(srcNode);
+		Node srcNode = gameServer.map.getGraph().getNode(srcPoint);
+		gameServer.map.getDijkstra().execute(srcNode);
 			
-		this.onCourse = GameServer.getInstance().map.getDijkstra().getPath(nodes.get(0));
+		this.onCourse = gameServer.map.getDijkstra().getPath(nodes.get(0));
 		for(int i = 1; i < nodes.size(); i++) {
 			srcNode = nodes.get(i-1);
-			GameServer.getInstance().map.getDijkstra().execute(srcNode);
-			this.onCourse.addAll(GameServer.getInstance().map.getDijkstra().getPath(nodes.get(i)));
+			gameServer.map.getDijkstra().execute(srcNode);
+			this.onCourse.addAll(gameServer.map.getDijkstra().getPath(nodes.get(i)));
 		}
 
 	}
 	
 	public void shootEnemy(TAgent enemy) {
-		int damage = GameServer.getInstance().rollDamageOutput();
+		int damage = gameServer.rollDamageOutput();
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent(String.format("SHOT %s %d", enemy.getAID().getName(), damage));
@@ -130,7 +133,7 @@ public class CTAgent extends Agent {
 		
 		ArrayList<Node> nodes = new ArrayList<Node>();
 		for(GridPoint temp : callPos) {
-			nodes.add(GameServer.getInstance().map.getGraph().getNode(temp));
+			nodes.add(gameServer.map.getGraph().getNode(temp));
 		}
 		createNewRoute(nodes);
 	}
@@ -145,7 +148,7 @@ public class CTAgent extends Agent {
 	}
 	
 	public void nominateNewIGL() {
-		ArrayList<String> aliveAgents = GameServer.getInstance().getAliveAgents();
+		ArrayList<String> aliveAgents = gameServer.getAliveAgents();
 		String newIGL = null;
 		
 		for (String agent : aliveAgents) {
@@ -236,7 +239,7 @@ public class CTAgent extends Agent {
 					
 					if (health > 0) {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
-						bombNode = GameServer.getInstance().map.getGraph().getNode(dest);
+						bombNode = gameServer.map.getGraph().getNode(dest);
 						System.out.println(getAID().getName() + " going to protect Bomb!");
 						createNewRoute(bombNode);		
 					}
@@ -246,7 +249,7 @@ public class CTAgent extends Agent {
 					isBombPlanted = true;
 					// TODO: Add bomb state to GameServer.
 					GridPoint pt = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
-					bombNode = GameServer.getInstance().map.getGraph().getNode(pt);
+					bombNode = gameServer.map.getGraph().getNode(pt);
 					
 					//onCourse.clear();
 					createNewRoute(bombNode);
