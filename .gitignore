@@ -17,3 +17,4 @@ repast-licenses
 *.log.1
 *.settings
 .temp/
+output/*.jar
