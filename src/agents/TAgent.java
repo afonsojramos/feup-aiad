@@ -230,7 +230,7 @@ public class TAgent extends Agent {
 		protected void onTick() {
 			checkSurroundings();
 			
-			if (!onCourse.isEmpty() && canAdvance)
+			if (onCourse != null && !onCourse.isEmpty() && canAdvance)
 				moveTowards(onCourse.removeFirst());
 			
 			if (getHasBomb() && canAdvance)

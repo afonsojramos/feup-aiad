@@ -1,4 +1,0 @@
-<repast.simphony.userpanel.ui.DefaultUserPanelDescriptor simphonyVersion="2.5.0">
-  <name>Custom Panel</name>
-  <userPanelCreator>ui.UserPanel</userPanelCreator>
-</repast.simphony.userpanel.ui.DefaultUserPanelDescriptor>

@@ -21,7 +21,7 @@ public class Map {
         edges = new ArrayList<Edge>();
         
         try {
-        	BufferedReader bufferNodes = new BufferedReader(new FileReader(new File("src/maps/nodes.txt"))); 
+        	BufferedReader bufferNodes = new BufferedReader(new FileReader(new File("/home/j-seixas/Documents/eclipse-workspace/aiad-source/src/maps/nodes.txt"))); 
         	String line; 
         	while ((line = bufferNodes.readLine()) != null) {
         		String[] splitLine = line.split(";");
@@ -29,7 +29,7 @@ public class Map {
         	} 
         	bufferNodes.close();
         
-        	BufferedReader bufferEdges = new BufferedReader(new FileReader(new File("src/maps/edges.txt"))); 
+        	BufferedReader bufferEdges = new BufferedReader(new FileReader(new File("/home/j-seixas/Documents/eclipse-workspace/aiad-source/src/maps/edges.txt"))); 
         	int i = 0;
         	while ((line = bufferEdges.readLine()) != null) {
         		String[] splitLine = line.split(";");

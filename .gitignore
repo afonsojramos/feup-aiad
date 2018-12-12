@@ -1,12 +1,10 @@
 /bin/
-*.txt
 !src/maps/nodes.txt
 !src/maps/edges.txt
 *.class
 .settings/
 .classpath
 .project
-batch/
 docs/
 icons/
 installer/
@@ -18,5 +16,4 @@ repast-licenses
 *.log
 *.log.1
 *.settings
-output/
 .temp/

@@ -1,0 +1,76 @@
+<repast.simphony.data2.engine.DataSetDescriptor simphonyVersion="2.5.0">
+  <name>A Data Set</name>
+  <type>AGGREGATE</type>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>Infinity</start>
+    <interval>0.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>ONE_TIME</frequency>
+    <hashCode>1094767644</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>CT Health</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>CT Health</id>
+        <className>agents.GameServer</className>
+        <methodName>getCTHealth</methodName>
+        <aggType>MIN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>T Health</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>T Health</id>
+        <className>agents.GameServer</className>
+        <methodName>getTHealth</methodName>
+        <aggType>MIN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Min Damage</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Min Damage</id>
+        <className>agents.GameServer</className>
+        <methodName>getMinDmg</methodName>
+        <aggType>MIN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Max Damage</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Max Damage</id>
+        <className>agents.GameServer</className>
+        <methodName>getMaxDmg</methodName>
+        <aggType>MIN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Crit Chance</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Crit Chance</id>
+        <className>agents.GameServer</className>
+        <methodName>getCritChance</methodName>
+        <aggType>MIN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Crit Damage</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Crit Damage</id>
+        <className>agents.GameServer</className>
+        <methodName>getCritDmg</methodName>
+        <aggType>MIN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

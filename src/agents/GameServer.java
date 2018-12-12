@@ -1,7 +1,9 @@
 package agents;
 
 import jade.lang.acl.ACLMessage;
+import jade.wrapper.ControllerException;
 import maps.Map;
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import sajas.core.AID;
@@ -28,17 +30,14 @@ public class GameServer extends Agent {
 	public int T_HEALTH = 100, CT_HEALTH = 200;
 	private int MIN_DMG = 20, MAX_DMG = 33, CRIT_DMG = 80, CRIT_CHANCE = 25;
 	
+	public String WINNER = "DRAW";
+	
 	private GameServer() {
 		this.isPlanted = false;
 		this.aliveAgents = new ArrayList<String>();
 		
 		for (int i = 1; i <= 5; i++) {
 			this.aliveAgents.add("T" + i); this.aliveAgents.add("CT" + i);			
-		}
-		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("src/data/data.txt", true)))) {
-		    out.print(T_HEALTH + "," + CT_HEALTH + "," + MIN_DMG + "," + MAX_DMG + "," + CRIT_DMG + "," + CRIT_CHANCE);
-		}catch (IOException e) {
-		    System.err.println(e);
 		}
 	}
 	
@@ -59,6 +58,11 @@ public class GameServer extends Agent {
 	public static GameServer getInstance() throws FileNotFoundException {
 		if (instance == null) instance = new GameServer();
 		return instance;
+	}
+	
+	public static GameServer newInstance() throws FileNotFoundException {
+		instance = null;
+		return getInstance();
 	}
 
 	public int rollDamageOutput() {
@@ -118,14 +122,6 @@ public class GameServer extends Agent {
 			return 0;
 	}
 	
-	private void finish(String winner) {
-		
-		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("src/data/data.txt", true)))) {
-		    out.println("," + winner);
-		}catch (IOException e) {
-		    System.err.println(e);
-		}
-	}
 	
 	private class ListeningBehaviour extends CyclicBehaviour {
 		private static final long serialVersionUID = 1L;
@@ -145,6 +141,12 @@ public class GameServer extends Agent {
 				if (info[0].equals("PLANTED"))
 					isPlanted = true;
 				
+				if(info[0].equals("DEFUSED"))
+					endGame("CT");
+				
+				if(info[0].equals("EXPLODED"))
+					endGame("T");
+				
 				if (info[0].equals("DEAD")) {
 					aliveAgents.remove(msg.getSender().getLocalName());
 					broadcastMessage(String.format("DEAD %s", msg.getSender().getName()));
@@ -154,13 +156,13 @@ public class GameServer extends Agent {
 						case 1:
 							//CTs are dead
 							broadcastMessage("WINNER T");
-							finish("T");
+							endGame("T");
 							System.out.println("CTs dead");
 							break;
 						case 3:
 							// Ts dead and bomb not planted
 							broadcastMessage("WINNER CT");
-							finish("CT");
+							endGame("CT");
 							System.out.println("Ts dead");
 							break;
 						default:
@@ -173,8 +175,72 @@ public class GameServer extends Agent {
 		}
 	}
 	
+	public void endGame(String winner) {
+		setWinner(winner);
+		System.out.println("-----------FINISHED-----------");
+		// shutdown
+		RunEnvironment.getInstance().endAt(RunEnvironment.getInstance().getCurrentSchedule().getTickCount()+1);
+		
+	}
+	
 	public ArrayList<String> getAliveAgents() {
 		return this.aliveAgents;
+	}
+	
+	public int getTHealth() {
+		return this.T_HEALTH;
+	}
+	
+	public int getCTHealth() {
+		return this.CT_HEALTH;
+	}
+	
+	public int getCritChance() {
+		return this.CRIT_CHANCE;
+	}
+	
+	public int getMinDmg() {
+		return this.MIN_DMG;
+	}
+	
+	public int getMaxDmg() {
+		return this.MAX_DMG;
+	}
+	
+	public int getCritDmg() {
+		return this.CRIT_DMG;
+	}
+	
+	public String getWinner() {
+		return this.WINNER;
+	}
+	
+	public void setTHealth(int value) {
+		this.T_HEALTH = value;
+	}
+	
+	public void setCTHealth(int value) {
+		this.CT_HEALTH = value;
+	}
+	
+	public void setCritChance(int value) {
+		this.CRIT_CHANCE = value;
+	}
+	
+	public void setMinDmg(int value) {
+		this.MIN_DMG = value;
+	}
+	
+	public void setMaxDmg(int value) {
+		this.MAX_DMG = value;
+	}
+	
+	public void setCritDmg(int value) {
+		this.CRIT_DMG = value;
+	}
+	
+	public void setWinner(String value) {
+		this.WINNER = value;
 	}
 	
 }

@@ -17,6 +17,8 @@ import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
 import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.RandomCartesianAdder;
@@ -52,7 +54,19 @@ public class SourceLauncher extends RepastSLauncher {
 	}
 	
 	private void launchAgents(ContainerController container) throws StaleProxyException, FileNotFoundException {
-		GameServer server = GameServer.getInstance();
+		GameServer server = GameServer.newInstance();
+		
+		//Set the parameters of execution
+		Parameters params = RunEnvironment.getInstance().getParameters();
+		server.setCTHealth((int) params.getValue("CT_Health"));
+		server.setTHealth((int) params.getValue("T_Health"));
+		server.setMinDmg((int) params.getValue("Min_Dmg"));
+		server.setMaxDmg((int) params.getValue("Max_Dmg"));
+		server.setCritDmg((int) params.getValue("Crit_Dmg"));
+		server.setCritChance((int) params.getValue("Crit_Chance"));
+		
+		RunEnvironment.getInstance().endAt(50000000);
+		
 		container.acceptNewAgent("server", server).start();
 		context.add(server);
 
