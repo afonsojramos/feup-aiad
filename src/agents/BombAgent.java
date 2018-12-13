@@ -35,7 +35,7 @@ public class BombAgent extends Agent {
 
 	@Override
 	public void takeDown() {
-		System.out.println("Bomb has exploded/been defused!");
+		//System.out.println("Bomb has exploded/been defused!");
 	}
 
 	public void broadcastCTs(String message) {
@@ -143,7 +143,7 @@ public class BombAgent extends Agent {
 				doDelete();
 			}
 
-			System.out.println(String.format("%d until explosion!", secondsRemaining));
+			//System.out.println(String.format("%d until explosion!", secondsRemaining));
 		}
 
 	}

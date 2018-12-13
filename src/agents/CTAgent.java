@@ -48,7 +48,7 @@ public class CTAgent extends Agent {
 	
 	@Override
 	public void setup() {
-		System.out.println(this.getAID().getName() + " reporting in.");
+		//System.out.println(this.getAID().getName() + " reporting in.");
 		
 		addBehaviour(new WalkingBehaviour(this, 200));
 		addBehaviour(new AliveBehaviour());
@@ -92,7 +92,7 @@ public class CTAgent extends Agent {
 		
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent(String.format("SHOT %s %d", enemy.getAID().getName(), damage));
-		System.out.println("INFO: " + getAID().getName() + " shot " + enemy.getAID().getName());
+		//System.out.println("INFO: " + getAID().getName() + " shot " + enemy.getAID().getName());
 		
 		msg.addReceiver(new AID("server@aiadsource", true));
 		send(msg);
@@ -144,7 +144,7 @@ public class CTAgent extends Agent {
 		msg.addReceiver(new AID("server@aiadsource", true));
 		send(msg);
 		
-		System.out.println(String.format("DEAD: %s", this.getAID().getName()));
+		//System.out.println(String.format("DEAD: %s", this.getAID().getName()));
 	}
 	
 	public void nominateNewIGL() {
@@ -222,7 +222,7 @@ public class CTAgent extends Agent {
 				String[] info = msg.getContent().split(" ");
 				
 				if (info[0].equals("SHOT")) {
-					System.out.println("INFO: " + getAID().getName() + " got tagged by " + info[1]);
+					//System.out.println("INFO: " + getAID().getName() + " got tagged by " + info[1]);
 					health -= Integer.parseInt(info[1]);
 				}
 				
@@ -240,7 +240,7 @@ public class CTAgent extends Agent {
 					if (health > 0) {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 						bombNode = gameServer.map.getGraph().getNode(dest);
-						System.out.println(getAID().getName() + " going to protect Bomb!");
+						//System.out.println(getAID().getName() + " going to protect Bomb!");
 						createNewRoute(bombNode);		
 					}
 				}
@@ -307,7 +307,7 @@ public class CTAgent extends Agent {
 			msg.setContent("DEFUSED");
 			msg.addReceiver(new AID("bomb@aiadsource", true));
 			send(msg);
-			System.out.println("Bomb has been defused!");
+			//System.out.println("Bomb has been defused!");
 			stop();
 		}
 		

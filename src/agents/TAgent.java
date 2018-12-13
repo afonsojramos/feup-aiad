@@ -51,7 +51,7 @@ public class TAgent extends Agent {
 	
 	@Override
 	public void setup() {
-		System.out.println(this.getAID().getName() + " reporting in.");
+		//System.out.println(this.getAID().getName() + " reporting in.");
 		
 		addBehaviour(new WalkingBehaviour(this, 200));
 		addBehaviour(new AliveBehaviour());
@@ -99,7 +99,7 @@ public class TAgent extends Agent {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setContent(String.format("SHOT %s %d", enemy.getAID().getName(), damage));
 		
-		System.out.println("INFO: " + getAID().getName() + " shot " + enemy.getAID().getName());
+		//System.out.println("INFO: " + getAID().getName() + " shot " + enemy.getAID().getName());
 		
 		msg.addReceiver(new AID("server@aiadsource", true));
 		send(msg);
@@ -152,7 +152,7 @@ public class TAgent extends Agent {
 		msg.addReceiver(new AID("server@aiadsource", true));
 		send(msg);
 		
-		System.out.println(String.format("DEAD: %s", this.getAID().getName()));
+		//System.out.println(String.format("DEAD: %s", this.getAID().getName()));
 	}
 	
 	public void informDroppedBomb() {
@@ -163,7 +163,7 @@ public class TAgent extends Agent {
 		msg.addReceiver(new AID("bomb@aiadsource", true));
 		send(msg);
 		
-		System.out.println("Bomb has been dropped in x = " + gp.getX() + ", y = " + gp.getY());
+		//System.out.println("Bomb has been dropped in x = " + gp.getX() + ", y = " + gp.getY());
 	}
 	
 	public void nominateNewIGL() {
@@ -191,7 +191,7 @@ public class TAgent extends Agent {
 		GridPoint bsAPoint = Calls.getBombsiteLocation(Positions.A_SITE), bsBPoint = Calls.getBombsiteLocation(Positions.B_SITE);
 		
 		if ((myLocal.getX() == bsAPoint.getX() && myLocal.getY() == bsAPoint.getY()) || (myLocal.getX() == bsBPoint.getX() && myLocal.getY() == bsBPoint.getY())) {
-			System.out.println(this.getAID().getName() + ": Planting bomb... 3 seconds remaining.");
+			//System.out.println(this.getAID().getName() + ": Planting bomb... 3 seconds remaining.");
 			addBehaviour(new BombPlantBehaviour(this, 3000, myLocal.getX(), myLocal.getY()));
 			
 			flipBombState();
@@ -246,7 +246,7 @@ public class TAgent extends Agent {
 					msg.addReceiver(new AID("bomb@aiadsource", true));
 					send(msg);
 					
-					System.out.println(getAID().getName() + ": Bomb is mine!");
+					//System.out.println(getAID().getName() + ": Bomb is mine!");
 					
 					flipBombState();
 				}
@@ -265,7 +265,7 @@ public class TAgent extends Agent {
 				String[] info = msg.getContent().split(" ");
 				
 				if (info[0].equals("SHOT")) {
-					System.out.println("INFO: " + getAID().getName() + " got tagged by " + info[1]);
+					//System.out.println("INFO: " + getAID().getName() + " got tagged by " + info[1]);
 					health -= Integer.parseInt(info[1]);
 				}
 				
@@ -281,7 +281,7 @@ public class TAgent extends Agent {
 					if (health > 0) {
 						GridPoint dest = new GridPoint(Integer.parseInt(info[1]), Integer.parseInt(info[2]));
 						bombNode = gameServer.map.getGraph().getNode(dest);
-						System.out.println(getAID().getName() + " going to get the Bomb!");
+						//System.out.println(getAID().getName() + " going to get the Bomb!");
 						createNewRoute(bombNode);	
 						
 					}
@@ -374,7 +374,7 @@ public class TAgent extends Agent {
 			msg.addReceiver(new AID("bomb@aiadsource", true));
 			send(msg);
 			
-			System.out.println("Bomb has been planted!");
+			//System.out.println("Bomb has been planted!");
 			stop();
 		}
 		

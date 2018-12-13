@@ -53,7 +53,7 @@ public class GameServer extends Agent {
 	
 	@Override
 	public void takeDown() {
-		System.out.println("Server shutdown.");
+		//System.out.println("Server shutdown.");
 	}
 	
 	public static GameServer getInstance() throws FileNotFoundException {
@@ -156,12 +156,12 @@ public class GameServer extends Agent {
 						case 1:
 							//CTs are dead
 							endGame("T");
-							System.out.println("CTs dead");
+							//System.out.println("CTs dead");
 							break;
 						case 3:
 							// Ts dead and bomb not planted
 							endGame("CT");
-							System.out.println("Ts dead");
+							//System.out.println("Ts dead");
 							break;
 						default:
 							//Both teams with alive agents or Ts dead with bomb planted
