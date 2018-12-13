@@ -30,7 +30,8 @@ public class GameServer extends Agent {
 	public int T_HEALTH = 100, CT_HEALTH = 200;
 	private int MIN_DMG = 20, MAX_DMG = 33, CRIT_DMG = 80, CRIT_CHANCE = 25;
 	
-	public String WINNER = "DRAW";
+	private String WINNER = "DRAW";
+	private String firstStrat = "";
 	
 	private GameServer() {
 		this.isPlanted = false;
@@ -211,6 +212,10 @@ public class GameServer extends Agent {
 		return this.WINNER;
 	}
 	
+	public String getFirstStrat() {
+		return this.firstStrat;
+	}
+	
 	public void setTHealth(int value) {
 		this.T_HEALTH = value;
 	}
@@ -237,6 +242,10 @@ public class GameServer extends Agent {
 	
 	public void setWinner(String value) {
 		this.WINNER = value;
+	}
+	
+	public void setFirstStrat(String value) {
+		this.firstStrat = value;
 	}
 	
 }

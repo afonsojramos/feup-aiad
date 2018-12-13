@@ -1,2 +1,0 @@
-"CT Health","T Health","Crit Chance","Crit Damage","Min Damage","Max Damage"
-200.0,100.0,25.0,80.0,20.0,33.0

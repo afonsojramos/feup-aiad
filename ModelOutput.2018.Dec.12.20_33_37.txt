@@ -1,2 +1,0 @@
-"Crit Damage","Min Damage","Max Damage"
-80.0,20.0,33.0

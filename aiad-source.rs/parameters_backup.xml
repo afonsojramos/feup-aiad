@@ -6,6 +6,13 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
+				<parameter name="First_Strat" displayName="First_Strat" type="java.lang.String" 
+						defaultValue="A_SPLIT" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									values="A_SPLIT A_RUSH B_SPLIT B_RUSH "
+						
+		/>
 				<parameter name="Min_Dmg" displayName="Min_Dmg" type="int" 
 						defaultValue="20" 
 						isReadOnly="false" 
@@ -40,12 +47,6 @@
 						defaultValue="200" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="Winner" displayName="Winner" type="java.lang.String" 
-						defaultValue="DRAW" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
 		</parameters>

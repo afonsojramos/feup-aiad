@@ -5,5 +5,5 @@ poll.frequency = 60.0
 model.output = /home/j-seixas/Documents/eclipse-workspace/aiad-source/output
 
 vm.arguments = -Xmx512M
-local.0.instances = 2
+local.0.instances = 4
 local.0.working_directory = /tmp

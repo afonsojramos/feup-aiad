@@ -64,6 +64,7 @@ public class SourceLauncher extends RepastSLauncher {
 		server.setMaxDmg((int) params.getValue("Max_Dmg"));
 		server.setCritDmg((int) params.getValue("Crit_Dmg"));
 		server.setCritChance((int) params.getValue("Crit_Chance"));
+		server.setFirstStrat((String) params.getValue("First_Strat"));
 		
 		RunEnvironment.getInstance().endAt(50000000);
 		

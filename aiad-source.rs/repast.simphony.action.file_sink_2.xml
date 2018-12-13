@@ -1,16 +1,11 @@
 <repast.simphony.data2.engine.FileSinkDescriptor simphonyVersion="2.5.0">
-  <name>A File Sink</name>
-  <dataSet>A Data Set</dataSet>
+  <name>Winner File Sink</name>
+  <dataSet>Winner Data Set</dataSet>
   <delimiter>,</delimiter>
   <format>TABULAR</format>
   <sourceIds class="linked-hash-set">
-    <string>CT Health</string>
-    <string>T Health</string>
-    <string>Min Damage</string>
-    <string>Max Damage</string>
-    <string>Crit Chance</string>
-    <string>Crit Damage</string>
+    <string>Winner</string>
   </sourceIds>
-  <fileName>ModelOutput.txt</fileName>
+  <fileName>Winner.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

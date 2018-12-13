@@ -35,7 +35,7 @@ public class TAgent extends Agent {
 	protected LinkedList<Node> onCourse;
 	protected TAgent instance;
 	protected Node bombNode; 
-	private String firstCallout;
+	private boolean hadFirstCallout;
 	
 	public TAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL, boolean hasBomb) throws FileNotFoundException {
 		this.gameServer = GameServer.getInstance();
@@ -46,7 +46,7 @@ public class TAgent extends Agent {
 		this.canAdvance = true;
 		this.bombNode = null;
 		this.wasBombDropped = false;
-		
+		this.hadFirstCallout = false;
 	}
 	
 	@Override
@@ -272,12 +272,9 @@ public class TAgent extends Agent {
 				if (info[0].equals("IGL"))
 					isIGL = true;
 				
-				if (info[0].equals("STRAT")) {
+				if (info[0].equals("STRAT")) 
 					playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
-					if(firstCallout == null)
-						firstCallout = info[1];
-				}
-				
+
 				if (info[0].equals("DROPPED")) {
 					wasBombDropped = true;
 					
@@ -292,14 +289,30 @@ public class TAgent extends Agent {
 				}
 				
 				if (info[0].equals("SERVER_OPERATIONAL")) {
-					if(isIGL) 
-						addBehaviour(new DelegateBehaviour());
 					
+					if(isIGL && hadFirstCallout) 
+						addBehaviour(new DelegateBehaviour());
+					else if(isIGL)
+						broadcastStrat(Callouts.valueOf(gameServer.getFirstStrat()));
+					
+					hadFirstCallout = true;
 					bombNode = null;			
 				}
 			} else {
 				block();
 			}
+		}
+	}
+	
+	private void broadcastStrat(Callouts callout) {
+		for (int i = 1; i <= 5; i++) {
+			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+			msg.setContent("STRAT " + callout + " " + i);
+			String receiverAID = String.format("T%d@aiadsource", i);
+			
+			msg.addReceiver(new AID(receiverAID, true));
+
+			send(msg);
 		}
 	}
 	
@@ -333,16 +346,7 @@ public class TAgent extends Agent {
 					break;
 			}
 		
-			for (int i = 1; i <= 5; i++) {
-				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-				msg.setContent("STRAT " + callout + " " + i);
-				String receiverAID = String.format("T%d@aiadsource", i);
-				
-				msg.addReceiver(new AID(receiverAID, true));
-
-				send(msg);
-			}
-			
+			broadcastStrat(callout);	
 			
 		}
 
@@ -386,10 +390,6 @@ public class TAgent extends Agent {
 	
 	public void flipBombState() {
 		this.hasBomb = !this.hasBomb;
-	}
-	
-	public String getFirstStrat() {
-		return this.firstCallout;
 	}
 	
 }
