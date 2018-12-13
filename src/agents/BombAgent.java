@@ -88,9 +88,9 @@ public class BombAgent extends Agent {
 				}
 
 				if (info[0].equals("DEFUSED")) {
+					// Inform defuse and CT win
 					state = State.DEFUSED;
 					broadcastGameServer("DEFUSED");
-					// TODO Inform defuse and CT win
 
 					doDelete();
 				}
@@ -138,7 +138,7 @@ public class BombAgent extends Agent {
 			secondsRemaining--;
 
 			if (secondsRemaining <= 0) {
-				// TODO Inform of exploded and T wins
+				// Inform of exploded and T wins
 				broadcastGameServer("EXPLODED");
 				doDelete();
 			}

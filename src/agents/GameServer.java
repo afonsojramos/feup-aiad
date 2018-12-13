@@ -132,8 +132,7 @@ public class GameServer extends Agent {
 			
 			if (msg != null) {
 				String[] info = msg.getContent().split(" ");
-				//System.out.println(msg.getContent());
-				
+
 				// TODO: Probably convert these to enum.
 				if (info[0].equals("SHOT"))
 					sendMessage(String.format("SHOT %s", info[2]), new AID(info[1], true));
@@ -155,13 +154,11 @@ public class GameServer extends Agent {
 					switch (teamDead) {
 						case 1:
 							//CTs are dead
-							broadcastMessage("WINNER T");
 							endGame("T");
 							System.out.println("CTs dead");
 							break;
 						case 3:
 							// Ts dead and bomb not planted
-							broadcastMessage("WINNER CT");
 							endGame("CT");
 							System.out.println("Ts dead");
 							break;
@@ -169,7 +166,6 @@ public class GameServer extends Agent {
 							//Both teams with alive agents or Ts dead with bomb planted
 							break;
 					}
-					//TODO Send message of winner in case of all team dead
 				}
 			}
 		}

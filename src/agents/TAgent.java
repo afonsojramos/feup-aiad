@@ -35,6 +35,7 @@ public class TAgent extends Agent {
 	protected LinkedList<Node> onCourse;
 	protected TAgent instance;
 	protected Node bombNode; 
+	private String firstCallout;
 	
 	public TAgent(ContinuousSpace<Object> space, Grid<Object> grid, boolean isIGL, boolean hasBomb) throws FileNotFoundException {
 		this.gameServer = GameServer.getInstance();
@@ -45,6 +46,7 @@ public class TAgent extends Agent {
 		this.canAdvance = true;
 		this.bombNode = null;
 		this.wasBombDropped = false;
+		
 	}
 	
 	@Override
@@ -267,15 +269,13 @@ public class TAgent extends Agent {
 					health -= Integer.parseInt(info[1]);
 				}
 				
-				/*if (info[0].equals("DEAD"))
-					System.out.println(String.format("DEAD: %s", info[1]));*/
-				
 				if (info[0].equals("IGL"))
 					isIGL = true;
 				
 				if (info[0].equals("STRAT")) {
 					playCallout(Callouts.valueOf(info[1]), Integer.parseInt(info[2]));
-					//playCallout(Callouts.A_SPLIT, Integer.parseInt(info[2]));
+					if(firstCallout == null)
+						firstCallout = info[1];
 				}
 				
 				if (info[0].equals("DROPPED")) {
@@ -288,8 +288,6 @@ public class TAgent extends Agent {
 						createNewRoute(bombNode);	
 						
 					}
-					
-					//TODO: First terrorist needs to claim the bomb and send a message for the others to resume the strat
 					
 				}
 				
@@ -388,6 +386,10 @@ public class TAgent extends Agent {
 	
 	public void flipBombState() {
 		this.hasBomb = !this.hasBomb;
+	}
+	
+	public String getFirstStrat() {
+		return this.firstCallout;
 	}
 	
 }
