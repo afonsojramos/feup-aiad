@@ -14,7 +14,11 @@ Counter-Strike Global Offensive is, currently, one of the most played games in t
 
 [Google Slides](https://docs.google.com/presentation/d/15tlFkkQYaeNafORDhkKJZhNOwullGsTFMsQw__GG7Yg/edit?usp=sharing)
 
+**Grade achieved**: 18/20
+
 
 ## Data Analysis
 
 [Google Slides](https://docs.google.com/presentation/d/1H6lY8pzEEzZzwidUa55H2OSdx--rAZHJYnk9KuZwaEQ/edit?usp=sharing)
+
+**Grade achieved**: 19/20
